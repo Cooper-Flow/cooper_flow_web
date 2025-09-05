@@ -1,10 +1,11 @@
 import { Component, signal } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DialogService } from '@app/services/common/dialog.service';
 import { NavigationService } from '@app/services/common/navigation.service';
 import { SnackbarService } from '@app/services/common/snackbar.service';
 import { PersonService } from '@app/services/user/person.service';
+import { ProfileService } from '@app/services/user/profile.service';
 import { Observable } from 'rxjs';
 @Component({
   selector: 'app-person-form',
@@ -21,6 +22,9 @@ export class PersonFormComponent {
   public form_producer: FormGroup;
   public form_customer: FormGroup;
   public user_id = signal('');
+  public profiles = new FormControl('');
+
+  public profileList: Array<any> = [];
 
   constructor(
     public navigationService: NavigationService,
@@ -29,7 +33,8 @@ export class PersonFormComponent {
     private _personService: PersonService,
     private _router: Router,
     private _snackService: SnackbarService,
-    private _activeRoute: ActivatedRoute
+    private _activeRoute: ActivatedRoute,
+    public profileService: ProfileService
   ) {
     this.form = this._formBuilder.group({
       name: ['', [Validators.required]],
@@ -68,6 +73,7 @@ export class PersonFormComponent {
       this.isEditing.set(true);
       this.user_id.set(user_id)
       this.detail(user_id);
+      this.getProfiles();
     }
   }
 
@@ -86,9 +92,12 @@ export class PersonFormComponent {
     this._personService.detail(id).subscribe(
       data => {
         this.form.patchValue(data);
-        this.form_user.patchValue(data.User)
-        this.form_producer.patchValue(data.Producer)
+        this.form_user.patchValue(data.User);
+        this.form_producer.patchValue(data.Producer);
         this.isLoading.set(false);
+
+        const profiles = data?.User?.ProfileUser.map((p: any) => p.profile_id);
+        this.profiles.patchValue(profiles);
       },
       error => {
         this.isLoading.set(false);
@@ -119,6 +128,7 @@ export class PersonFormComponent {
     const data = this.form.value;
     data.user = this.form_user.value;
     data.producer = this.form_producer.value;
+    data.profiles = this.profiles.value;
 
     let observable: Observable<any>;
 
@@ -147,5 +157,16 @@ export class PersonFormComponent {
 
     this.form_user.get(['user'])?.setValue(email)
 
+  }
+
+  public getProfiles() {
+    this.profileService.combolist().subscribe(
+      response => {
+        this.profileList = response
+      },
+      error => {
+        this._snackService.open(error.error.message)
+      }
+    )
   }
 }

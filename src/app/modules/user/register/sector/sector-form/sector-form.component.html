@@ -9,7 +9,7 @@
 <ng-template #mainTemplate>
   <div class="mb-8 flex items-center justify-between">
     <div class="mr-2">
-      <app-title [text]="(isEditing() ? 'Atualizar' : 'Novo') + ' setor'" [icon]="icon"></app-title>
+      <app-title [text]="(isEditing() ? 'Atualizar' : 'Nova') + ' área'" [icon]="icon"></app-title>
     </div>
     <button mat-button routerLink="/in/sectors" class="!text-primary flex items-center"
       matTooltip="Voltar para lista de usuários">
@@ -23,12 +23,12 @@
       <div class="mb-4 lg:flex">
         <div class="lg:w-[500px] w-full mr-2 mb-4">
           <label for="name" class="block mb-1 text-sm font-medium text-gray-900">
-            Nome do setor
+            Nome do área
           </label>
           <input type="text" id="first_name" formControlName="name"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" />
           @if (form.controls['name'].hasError('required') && showError()) {
-          <p class="mt-2 text-sm text-red-600 dark:text-red-500">Nome do setor é obrigatório</p>
+          <p class="mt-2 text-sm text-red-600 dark:text-red-500">Nome da área é obrigatório</p>
           }
         </div>
 

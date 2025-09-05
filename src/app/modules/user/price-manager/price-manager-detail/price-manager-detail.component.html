@@ -1,0 +1,256 @@
+<section class="lg:p-4 p-2">
+  @if(isLoading()) {
+  <app-loading></app-loading>
+  } @else {
+  <ng-container *ngTemplateOutlet="mainTemplate"></ng-container>
+  }
+</section>
+
+<ng-template #mainTemplate>
+  <div class="mr-4 lg:mb-4 mb-4 flex items-center pt-2">
+    <app-title [text]="title" [icon]="icon"></app-title>
+  </div>
+
+  <div>
+    <div class="mb-4">
+      <div class="mb-2 text-sm">
+        <span>Responsável:</span>
+        <span class="font-medium"> {{ pricingData?.User?.Person?.name }} </span>
+      </div>
+      <div class="mb-2 text-sm">
+        <span>Criado em:</span>
+        <span class="text-gray-500"> {{ dateTime.convertToBRTime(pricingData.created_at) }} </span>
+      </div>
+      <div class="mb-2 text-sm font-medium">
+        <span>Status: </span>
+        @switch (pricingData.status) {
+        @case ('ongoing') {
+        <span class="text-orange-400">Andamento</span>
+        }
+        @case ('closed') {
+        <span class="text-green-400">Concluído</span>
+        }
+        }
+      </div>
+    </div>
+
+    <div class="mb-10">
+      <div class="flex items-center justify-between mb-4">
+        <div class="text-gray-500 text-sm">
+          <span>Total de volumes selecionados: {{ pricingData.PricingItem?.length }}</span>
+        </div>
+        @if(canEdit) {
+        <div>
+          <button mat-flat-button (click)="addValues()">
+            <mat-icon>add</mat-icon>
+            Valores adicionais
+          </button>
+        </div>
+        }
+      </div>
+      <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr>
+              <th scope="col" class="px-1 py-3">
+              </th>
+              <th scope="col" class="px-6 py-3">
+                Produtor
+              </th>
+              <th scope="col" class="px-6 py-3">
+                Lote
+              </th>
+              <th scope="col" class="px-6 py-3">
+                Talhão
+              </th>
+              <th scope="col" class="px-6 py-3">
+                Produto
+              </th>
+              <th scope="col" class="px-6 py-3">
+                Quantidade
+              </th>
+              <th scope="col" class="px-6 py-3">
+
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of pricingData.PricingItem; track $index) {
+            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 border-gray-200">
+              <th scope="row" class="px-1 py-2 text-gray-900 whitespace-nowrap">
+                <div class="flex flex-wrap items-center justify-center pl-1">
+                  <div class="w-7 h-7">
+                    <app-icon icon="box" />
+                  </div>
+                </div>
+              </th>
+              <td class="px-2 py-1 text-xs">
+                <div>
+                  <span class="font-medium text-black">{{ item?.Volume?.Entry?.Producer?.Person?.name ?? '---' }}</span>
+                </div>
+                <div>
+                  <span class="font-medium">Entrada {{ item?.Volume?.Entry?.id ?? '---' }}</span>
+                </div>
+              </td>
+              <td class="px-6 py-1 text-xs">
+                {{ item?.Volume?.Entry?.batch ?? '---' }}
+              </td>
+              <td class="px-6 py-1  text-xs">
+                {{ item?.Volume?.Entry?.field ?? '---' }}
+              </td>
+              <td class="px-6 py-1  text-xs font-medium">
+                <div>
+                  <span class="text-orange-600">{{ item?.Volume?.Product?.name ?? '---' }}</span>
+                </div>
+                <div>
+                  <span>{{ item?.Volume?.type ?? '---' }} • {{ item?.Volume?.size ?? '---' }}</span>
+                </div>
+              </td>
+              <td class="px-6 py-1  text-xs font-medium">
+                <span class="font-medium text-black">{{ item?.Volume?.weight }} KG </span>
+                <span>({{ item?.Volume?.Material?.name }})</span>
+              </td>
+              <td class="px-6 py-1 text-xs flex items-center justify-end">
+                @if (canEdit) {
+                <div class="flex items-center max-w-[200px]">
+                  <span matTextPrefix>R$&nbsp;</span>
+                  <input matInput type="text" [value]="formatPrice(item.price)" (input)="onPriceInput($event, item)"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    placeholder="0,00" />
+                </div>
+                } @else {
+                <div>
+                  <span>R$ {{formatPrice(item.price)}}</span>
+                </div>
+                }
+              </td>
+
+            </tr>
+            }
+          </tbody>
+        </table>
+
+        @if (additionalList.length > 0) {
+        <div class="h-1 w-full bg-gray-200"></div>
+
+        <div>
+          <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3">
+                  Descrição
+                </th>
+                <th scope="col" class="px-6 py-3">
+                  Tipo
+                </th>
+                <th scope="col" class="px-6 py-3">
+
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (value of additionalList; track $index) {
+              <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 border-gray-200">
+                <td class="px-6 py-1 text-xs">
+                  @if (canEdit) {
+                  <textarea type="text" [(ngModel)]="value.description" [ngModelOptions]="{standalone: true}"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                  </textarea>
+                  } @else {
+                  <div>
+                    <span>{{value.description}}</span>
+                  </div>
+                  }
+                </td>
+                <td scope="row" class="px-1 py-1 text-gray-900 whitespace-nowrap">
+                  @if (canEdit) {
+                  <select [(ngModel)]="value.type" [ngModelOptions]="{standalone: true}"
+                    class="font-medium bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[150px] p-2.5">
+                    <option value="add">Adicional</option>
+                    <option value="remove">Desconto</option>
+                  </select>
+                  } @else {
+                  <div class="text-gray-400 text-xs">
+                    @switch (value.type) {
+                    @case ('add') {
+                    <span>Adicional</span>
+                    }
+                    @case ('remove') {
+                    <span>Desconto</span>
+                    }
+                    }
+                  </div>
+                  }
+                </td>
+                <td class="px-6 py-1 text-xs flex items-center justify-end">
+                  @if (canEdit) {
+                  <div class="flex items-center justify-end max-w-[200px]">
+                    <span matTextPrefix>R$&nbsp;</span>
+                    <input matInput type="text" [value]="formatPrice(value.price)" (input)="onPriceInput($event, value)"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                      placeholder="0,00" />
+                  </div>
+                  } @else {
+                  <div>
+                    <span>R$ {{formatPrice(value.price)}}</span>
+                  </div>
+                  }
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        }
+        <div class="flex justify-end">
+          <div class="py-4 mr-8">
+            <span class="font-medium text-sm">Total: {{ totalPrice }}</span>
+          </div>
+        </div>
+      </div>
+
+      @if (canEdit) {
+      <div class="flex justify-center items-center py-4">
+        <button mat-flat-button (click)="confirm()" class="!bg-green-500">
+          Finalizar precificação
+        </button>
+      </div>
+      }
+    </div>
+
+    <div>
+      @if(!canEdit) {
+        <div class="rounded-lg shadow-md">
+          @for (obs of observationlList; track $index) {
+            <div class="rounded-lg border-l-2 border-orange-400 mb-2 p-4">
+              <div class="flex items-center gap-2 mb-4">
+                <mat-icon class="text-gray-700">person</mat-icon>
+                <div class="mr-2">
+                  <span class="text-gray-700 font-medium text-sm">{{ obs?.User?.Person?.name }}</span>
+                </div>
+                <div>
+                  <span class="text-gray-700 text-xs">{{ dateTime.convertToBRTime(obs?.created_at) }}</span>
+                </div>
+              </div>
+              <div class="text-sm">
+                <span>{{ obs.description }}</span>
+              </div>
+            </div>
+          }
+        </div>
+        <div>
+          <textarea  [disabled]="sendingObs()" [(ngModel)]="observation" [ngModelOptions]="{standalone: true}" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Escrever observação ..."></textarea>
+          <div class="flex justify-end py-2">
+            <button mat-stroked-button matTooltip="Enviar observação" (click)="sendObservation()" [disabled]="sendingObs()">
+              @if (sendingObs()) {
+                Enviando ...
+              } @else {
+                Enviar
+              }
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</ng-template>

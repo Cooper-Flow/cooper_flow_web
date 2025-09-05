@@ -24,4 +24,8 @@ export class VolumeService {
   public delete(id: string): Observable<any> {
     return this.http.delete(`volume/delete/${id}`);
   }
+
+  public undoVolume(data: any): Observable<any> {
+    return this.http.post(`volume/undo`, data);
+  }
 }

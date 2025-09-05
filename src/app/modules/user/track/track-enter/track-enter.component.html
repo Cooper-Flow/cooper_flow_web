@@ -82,6 +82,14 @@
     <div class="pb-4 border-b border-gray-300 mb-4 lg:flex">
       <div class="mb-4">
         <div class="lg:w-[300px] w-full mr-4">
+          <span class="text-sm font-medium">Lote</span>
+          <input type="text" id="batch" formControlName="batch"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" />
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <div class="lg:w-[300px] w-full mr-4">
           <span class="text-sm font-medium">Talhão</span>
           <input type="text" id="field" formControlName="field"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" />
@@ -185,7 +193,7 @@
           </div>
 
           <div class="w-full mb-1">
-            <label class="text-xs text-gray-400">Localização</label>
+            <label class="text-xs text-gray-400">Palete</label>
             <select [(ngModel)]="volume.location" [ngModelOptions]="{standalone: true}"
               class=" text-gray-900 text-sm border border-gray-300 block p-2.5 w-full bg-gray-50 rounded-lg">
               @for (location of locationList; track $index) {
@@ -275,6 +283,13 @@
         </div>
       </div>
 
+      <!-- Lote -->
+      <div class="mb-4">
+        <div class="mr-2">
+          <span class="text-sm"><span class="font-medium">Lote:</span> {{ finalData?.batch }}</span>
+        </div>
+      </div>
+
       <!-- Data de entrada -->
       <div class="mb-4">
         <div class="mr-2">
@@ -301,7 +316,7 @@
             <span class="text-sm"><span class="font-medium">Tamanho: </span> {{ volume?.size }}</span>
           </div>
           <div class="mr-2">
-            <span class="text-sm"><span class="font-medium">Localização: </span> {{ volume?.location?.name }}</span>
+            <span class="text-sm"><span class="font-medium">Palete: </span> {{ volume?.location?.name }}</span>
           </div>
           <div class="mr-2">
             <span class="text-sm"><span class="font-medium">Peso: </span> {{ volume?.weight }} kg • {{

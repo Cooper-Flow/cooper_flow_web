@@ -1,13 +1,15 @@
-import { routes } from './../../../../app.routes';
 import { Component, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DateTime } from '@app/resources/handlers/datetime';
-import { DialogService } from '@app/services/common/dialog.service';
+import { Regex } from '@app/resources/handlers/regex';
 import { LoadingService } from '@app/services/common/loading.service';
 import { NavigationService } from '@app/services/common/navigation.service';
 import { SnackbarService } from '@app/services/common/snackbar.service';
+import { LocationService } from '@app/services/user/location.service';
 import { RegisterService } from '@app/services/user/register.service';
+import { SectorService } from '@app/services/user/sector.service';
+import { VolumeService } from '@app/services/user/volume.service';
 import { DialogConfirmComponent } from '@app/shared/components/dialog-confirm/dialog-confirm.component';
 
 @Component({
@@ -30,7 +32,9 @@ export class TrackExitComponent implements OnInit {
     public dialog: MatDialog,
     private _loadingService: LoadingService,
     public snackService: SnackbarService,
-    public router: Router
+    public router: Router,
+    public regex: Regex,
+    private _volumeService: VolumeService
   ) { }
 
   ngOnInit(): void {
@@ -38,7 +42,8 @@ export class TrackExitComponent implements OnInit {
     const exit_id = this._activeRoute.snapshot.params['id'];
 
     this.getExit(exit_id);
-    this.date = this.dateTime.getDateTime()
+    this.date = this.dateTime.getDateTime();
+
   }
 
   get title() {
@@ -62,12 +67,12 @@ export class TrackExitComponent implements OnInit {
 
   public closeExit() {
 
-    if(['', null, undefined, false].includes(this.date)) {
+    if (['', null, undefined, false].includes(this.date)) {
       this.snackService.open('Selecione a data e horário de saída')
       return
     }
 
-    if(this.exitData?.VolumeExit?.length === 0) {
+    if (this.exitData?.VolumeExit?.length === 0) {
       this.snackService.open('Saída sem volumes adicionados')
       return
     }
@@ -75,13 +80,13 @@ export class TrackExitComponent implements OnInit {
     this._loadingService.setIsLoading(true);
   }
 
-  public confirm(){
+  public confirm() {
 
     const dialogRef = this.dialog.open(DialogConfirmComponent);
 
     dialogRef.afterClosed().subscribe(
       response => {
-        if(response) {
+        if (response) {
 
           const data = {
             exit_id: this.exitData.id,
@@ -92,12 +97,52 @@ export class TrackExitComponent implements OnInit {
           this._registerService.closeExit(data).subscribe(
             response => {
               this.snackService.open(response.message)
-              this.router.navigate(['/in/track'])
+              this.router.navigate(['/in/track/exit/list']).then(() => {
+                window.location.reload()
+              });
+
             }
           )
         }
       }
     )
   }
+
+  public undo(volume_id: string) {
+
+    const dialogRef = this.dialog.open(DialogConfirmComponent);
+
+    dialogRef.afterClosed().subscribe(
+      response => {
+        if (response) {
+
+          this._loadingService.setIsLoading(true);
+
+          const data = {
+            volume_id: volume_id
+          }
+
+          this._volumeService.undoVolume(data).subscribe(
+            response => {
+              this.snackService.open(response.message)
+              setTimeout(() => {
+                this.router.navigate(['/in/track/exit/list']).then(() => {
+                  window.location.reload()
+                });
+                this._loadingService.setIsLoading(false);
+              }, 2500)
+
+
+            },
+            excp => {
+              this._loadingService.setIsLoading(false);
+              this.snackService.open(excp.error.message);
+            }
+          )
+        }
+      }
+    )
+  }
+
 }
 

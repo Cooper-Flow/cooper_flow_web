@@ -24,6 +24,10 @@ import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
 import {MatListModule} from '@angular/material/list';
 import {MatBadgeModule} from '@angular/material/badge';
 import {MatChipsModule} from '@angular/material/chips';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+
 
 @NgModule({
   declarations: [],
@@ -53,7 +57,10 @@ import {MatChipsModule} from '@angular/material/chips';
     MatBottomSheetModule,
     MatListModule,
     MatBadgeModule,
-    MatChipsModule
+    MatChipsModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatSelectModule,
   ],
   exports: [
     MatInputModule,
@@ -80,7 +87,10 @@ import {MatChipsModule} from '@angular/material/chips';
     MatBottomSheetModule,
     MatListModule,
     MatBadgeModule,
-    MatChipsModule
+    MatChipsModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatSelectModule
   ]
 })
 export class MaterialModule { }

@@ -1,0 +1,66 @@
+@if (isLoading()) {
+<div>
+  <app-loading></app-loading>
+</div>
+}
+@else {
+<ng-container *ngTemplateOutlet="mainTemplate"></ng-container>
+}
+
+<ng-template #mainTemplate>
+  <div class="w-[100%] min-h-[90vh] pt-4 pl-4">
+    <div>
+      <div class="flex items-center mb-4">
+        <div class="w-10 h-10 mr-2">
+          <app-icon icon="palette"></app-icon>
+        </div>
+        <div>
+          <div class="flex items-center">
+            <div class="mr-2">
+              <span class="font-medium">{{ palletData.name }}</span>
+            </div>
+            @if (palletData.Sector) {
+            <div class="bg-gray-500 rounded-full px-2 font-medium text-white">
+              <span class="text-xs">{{ palletData.Sector.name }}</span>
+            </div>
+            }
+          </div>
+          <div>
+            <span class="text-sm text-gray-600 text-normal">{{ palletData?.Volume?.length + ' ' +
+              (palletData?.Volume?.length > 1 ? 'volumes' : 'volume') }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-2">
+        @for (item of palletData.Volume; track $index) {
+        <div [matMenuTriggerFor]="menu" class="transform active:scale-95 transition duration-150">
+          <app-card-volume [item]="item" />
+        </div>
+        <mat-menu #menu="matMenu" xPosition="before">
+          <button mat-menu-item (click)="navigateRegister(item?.Entry?.Register?.id)"
+            class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+            <mat-icon class="mr-2">app_registration</mat-icon>
+            Ver registro
+          </button>
+          <button mat-menu-item (click)="navigateTrack(item.id, 'movimentation')"
+            class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+            <mat-icon class="mr-2">change_circle</mat-icon>
+            Movimentar
+          </button>
+          <button mat-menu-item (click)="navigateTrack(item.id, 'exit')"
+            class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+            <mat-icon class="mr-2">local_shipping</mat-icon>
+            Dar saída
+          </button>
+          <button mat-menu-item (click)="deleteVolume(item.id)"
+            class="flex items-center p-2 hover:bg-gray-200 hover:cursor-pointer">
+            <mat-icon class="mr-2">delete</mat-icon>
+            Excluir
+          </button>
+        </mat-menu>
+        }
+      </div>
+    </div>
+  </div>
+</ng-template>

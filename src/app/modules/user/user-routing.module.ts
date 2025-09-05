@@ -30,6 +30,11 @@ import { SettingComponent } from './setting/setting.component';
 import { ReportDetailComponent } from './report/report-detail/report-detail.component';
 import { TrackExitListComponent } from './track/track-exit-list/track-exit-list.component';
 import { TrackExitFormComponent } from './track/track-exit-form/track-exit-form.component';
+import { PriceManagerComponent } from './price-manager/price-manager.component';
+import { ReportManagerComponent } from './report-manager/report-manager.component';
+import { PriceManagerDetailComponent } from './price-manager/price-manager-detail/price-manager-detail.component';
+import { PermissionGuard } from '@app/guards/permission.guard';
+import { PermissionEnum } from '@app/enum/permissions.enum';
 
 const routes: Routes = [
   // Rastreabilidade
@@ -45,30 +50,140 @@ const routes: Routes = [
   { path: 'register/:id', component: ReportDetailComponent },
   { path: 'stock', component: StockComponent },
 
+  {
+    path: 'price-manager',
+    component: PriceManagerComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.P01 }
+  },
+  {
+    path: 'price-manager/:id',
+    component: PriceManagerDetailComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.P01 }
+  },
+
+  {
+    path: 'report-manager',
+    component: ReportManagerComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.T07 }
+  },
+
   // Cadastros
-  { path: 'persons', component: PersonListComponent },
-  { path: 'persons/new', component: PersonFormComponent },
-  { path: 'persons/:id', component: PersonFormComponent },
+  {
+    path: 'persons',
+    component: PersonListComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.R01 }
+  },
+  {
+    path: 'persons/new',
+    component: PersonFormComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.R01 }
+  },
+  {
+    path: 'persons/:id',
+    component: PersonFormComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.R01 }
+  },
 
-  { path: 'products', component: ProductListComponent },
-  { path: 'products/new', component: ProductFormComponent },
-  { path: 'products/:id', component: ProductFormComponent },
+  {
+    path: 'products',
+    component: ProductListComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.R02 }
+  },
+  {
+    path: 'products/new',
+    component: ProductFormComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.R02 }
+  },
+  {
+    path: 'products/:id',
+    component: ProductFormComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.R02 }
+  },
 
-  { path: 'sectors', component: SectorListComponent },
-  { path: 'sectors/new', component: SectorFormComponent },
-  { path: 'sectors/:id', component: SectorFormComponent },
+  {
+    path: 'sectors',
+    component: SectorListComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.R03 }
+  },
+  {
+    path: 'sectors/new',
+    component: SectorFormComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.R03 }
+  },
+  {
+    path: 'sectors/:id',
+    component: SectorFormComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.R03 }
+  },
 
-  { path: 'locations', component: LocationListComponent },
-  { path: 'locations/new', component: LocationFormComponent },
-  { path: 'locations/:id', component: LocationFormComponent },
+  {
+    path: 'locations',
+    component: LocationListComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.R04 }
+  },
+  {
+    path: 'locations/new',
+    component: LocationFormComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.R04 }
+  },
+  {
+    path: 'locations/:id',
+    component: LocationFormComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.R04 }
+  },
 
-  { path: 'materials', component: MaterialListComponent },
-  { path: 'materials/new', component: MaterialFormComponent },
-  { path: 'materials/:id', component: MaterialFormComponent },
+  {
+    path: 'materials',
+    component: MaterialListComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.R05 }
+  },
+  {
+    path: 'materials/new',
+    component: MaterialFormComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.R05 }
+  },
+  {
+    path: 'materials/:id',
+    component: MaterialFormComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.R05 }
+  },
 
-  { path: 'profiles', component: ProfileListComponent },
-  { path: 'profiles/new', component: ProfileFormComponent },
-  { path: 'profiles/:id', component: ProfileFormComponent },
+  {
+    path: 'profiles',
+    component: ProfileListComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.S01 }
+  },
+  {
+    path: 'profiles/new',
+    component: ProfileFormComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.S01 }
+  },
+  {
+    path: 'profiles/:id',
+    component: ProfileFormComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: PermissionEnum.S01 }
+  },
 
   { path: 'setting', component: SettingComponent },
 

@@ -1,12 +1,14 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { DateTime } from '@app/resources/handlers/datetime';
 import { Regex } from '@app/resources/handlers/regex';
+import { ImagesService } from '@app/services/common/images.service';
 import { NavigationService } from '@app/services/common/navigation.service';
 import { LocationService } from '@app/services/user/location.service';
 import { SectorService } from '@app/services/user/sector.service';
-import { SheetVolumeComponent } from '@app/shared/components/sheet-volume/sheet-volume.component';
+import { SheetPalletComponent } from '@app/shared/components/sheets/sheet-pallet/sheet-pallet.component';
 
 @Component({
   selector: 'app-track',
@@ -29,6 +31,9 @@ export class TrackComponent {
     public regex: Regex,
     public dateTime: DateTime,
     public router: Router,
+    public imagesService: ImagesService,
+    public dialog: MatDialog,
+    private _bottomSheet: MatBottomSheet,
   ) { }
 
   ngOnInit(): void {
@@ -78,6 +83,21 @@ export class TrackComponent {
 
   public detailLocation(id: string) {
     this.router.navigate(['/in/track/location/detail/' + id])
+  }
+
+  public openLocationDialog(id: string) {
+    const sheets = this._bottomSheet.open(SheetPalletComponent, {
+      data: {
+        location_id: id
+      }
+    });
+
+    sheets.afterDismissed().subscribe(
+      response => {
+        console.log('asdad')
+        this.getTrack()
+      }
+    )
   }
 
   public checkNew(location: any) {

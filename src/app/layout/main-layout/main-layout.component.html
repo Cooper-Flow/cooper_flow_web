@@ -21,22 +21,4 @@
     </div>
   </main>
 
-  <div class="lg:hidden flex pb-2 z-40 fixed bottom-1 right-0 px-4">
-    <button mat-icon-button [matMenuTriggerFor]="menu"
-      class="mat-elevation-z8 !bg-orange-500 !text-white sm:!w-[70px] sm:!h-[70px] flex items-center justify-center">
-      <mat-icon>add</mat-icon>
-    </button>
-    <mat-menu #menu="matMenu" class="mb-2">
-      <button mat-menu-item routerLink="/in/track/enter" class="!text-green-500 flex items-center mr-2"
-        matTooltip="Entrada de produtos">
-        <mat-icon class="!text-green-500">move_to_inbox</mat-icon>
-        Entrada</button>
-
-      <button mat-menu-item routerLink="/in/track/exit/init" class="!text-blue-500 flex items-center"
-        matTooltip="Saída de produtos">
-        <mat-icon class="!text-blue-500">local_shipping</mat-icon>
-        Saída</button>
-    </mat-menu>
-  </div>
-
 </section>

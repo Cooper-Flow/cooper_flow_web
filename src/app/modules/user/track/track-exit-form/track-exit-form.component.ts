@@ -91,7 +91,7 @@ export class TrackExitFormComponent {
       response => {
         this.snackService.open(response.message);
         this.navigationService.getExits();
-        this.router.navigate(['/track'])
+        this.router.navigate(['/track/exit/list'])
       },
       excp => {
         this.snackService.open(excp.error.message);

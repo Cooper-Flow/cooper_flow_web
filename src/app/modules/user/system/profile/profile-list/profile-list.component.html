@@ -1,1 +1,94 @@
-<p>profile-list works!</p>
+<section class="lg:p-8 p-2">
+  @if(isLoading()) {
+  <app-loading></app-loading>
+  } @else {
+  <ng-container *ngTemplateOutlet="mainTemplate"></ng-container>
+  }
+</section>
+
+<ng-template #mainTemplate>
+  <div class="mr-2">
+    <app-title [text]="title" [icon]="icon"></app-title>
+  </div>
+  <div class="flex">
+    <div class="max-w-[220px] w-full border-r-2 border-gray-300 min-h-[500px] pr-2 pt-4">
+
+      @for (item of profileList; track $index) {
+      <div class="mb-2">
+        <mat-chip (click)="selectProfile(item.id)"
+          [ngClass]="{ '!bg-blue-200 !text-white' : selectedProfile === item.id }">
+          <div class="flex items-center gap-2 hover:cursor-pointer w-[200px]">
+            <div class="w-2 h-2 rounded-full"
+              [style.background-color]="imageService.getRgbaColorFromName(item.id, 0.7)">
+            </div>
+            <div>
+              <span class="text-sm text-gray-500 font-medium">{{ item.name }}</span>
+            </div>
+          </div>
+        </mat-chip>
+      </div>
+      }
+
+      @if (newProfile()) {
+      <div class="py-1 flex items-center">
+        <input matInput type="text" #profileInput [(ngModel)]="newProfileName" [ngModelOptions]="{standalone: true}"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+          placeholder="Nome do novo perfil" />
+        <button mat-icon-button (click)="create()">
+          <mat-icon class="!text-green-400">done</mat-icon>
+        </button>
+      </div>
+      }
+
+      @if (!newProfile()) {
+      <div class="flex justify-center mt-4">
+        <button mat-stroked-button (click)="focusNew()" matTooltip="Adicionar novo perfil" class="!text-orange-400">
+          <mat-icon class="!text-orange-400">add</mat-icon>
+          Novo perfil
+        </button>
+      </div>
+      }
+    </div>
+
+    <div class="w-full  h-full p-4">
+      <div class="mb-4">
+        <input matInput type="text" [(ngModel)]="currentProfileName" [ngModelOptions]="{standalone: true}"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+          placeholder="Nome do novo perfil" />
+      </div>
+      <div>
+        <label class="block mb-2 text-sm font-medium text-gray-900">Permissões</label>
+        <div>
+          @for (perm of permissionListFromNavigation; track $index) {
+          <div class="rounded-lg border-[1px] border-gray-300 p-4 mb-2">
+            <div class="mb-4">
+              <span class="text-sm font-medium">{{ perm.category }}</span>
+            </div>
+            <div>
+              @for (item of perm.list; track $index) {
+              <div class="flex items-center mb-2">
+                <label class="inline-flex items-center cursor-pointer mr-2">
+                  <input type="checkbox"  [(ngModel)]="item.selected" [ngModelOptions]="{standalone: true}" class="sr-only peer">
+                  <div
+                    class="rounded-full relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600">
+                  </div>
+                </label>
+                <div>
+                  <span class="text-sm">{{ item.description }}</span>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+
+      <div class="py-4 flex justify-center items-center">
+        <button mat-flat-button (click)="update()">
+          Salvar
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

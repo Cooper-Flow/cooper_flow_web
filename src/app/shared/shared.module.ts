@@ -17,10 +17,13 @@ import { VolumeCard2Component } from './components/volume-card-2/volume-card-2.c
 import { ZeroLengthComponent } from './components/zero-length/zero-length.component';
 import { LoadingTransformComponent } from './components/loading-transform/loading-transform.component';
 import { DialogTransformComponent } from './components/dialog-transform/dialog-transform.component';
-import { SheetVolumeComponent } from './components/sheet-volume/sheet-volume.component';
+import { SheetVolumeComponent } from './components/sheets/sheet-volume/sheet-volume.component';
 import { SelectorCustomerComponent } from './components/selector-customer/selector-customer.component';
 import { SelectorLocationComponent } from './components/selector-location/selector-location.component';
 import { DialogConfirmComponent } from './components/dialog-confirm/dialog-confirm.component';
+import { IconComponent } from './components/icon/icon.component';
+import { SheetPalletComponent } from './components/sheets/sheet-pallet/sheet-pallet.component';
+import { CardVolumeComponent } from './components/cards/card-volume/card-volume.component';
 
 const config: ExtraOptions = {
   useHash: false,
@@ -47,7 +50,10 @@ const config: ExtraOptions = {
     SheetVolumeComponent,
     SelectorCustomerComponent,
     SelectorLocationComponent,
-    DialogConfirmComponent
+    DialogConfirmComponent,
+    IconComponent,
+    SheetPalletComponent,
+    CardVolumeComponent
   ],
   imports: [
     CommonModule,
@@ -76,7 +82,11 @@ const config: ExtraOptions = {
     SheetVolumeComponent,
     SelectorCustomerComponent,
     SelectorLocationComponent,
-    DialogConfirmComponent
+    DialogConfirmComponent,
+    IconComponent,
+    SheetPalletComponent,
+    DialogTransformComponent,
+    CardVolumeComponent
   ],
 })
 export class SharedModule { }

@@ -2,7 +2,7 @@
   @if (isLoading()) {
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   }
-  <div class="min-w-[300px] max-w-screen lg:p-4 p-2 min-h-[500px]">
+  <div class="min-w-[300px] max-w-screen lg:p-4 px-3 py-4">
     <ng-container *ngTemplateOutlet="mainTemplate"></ng-container>
   </div>
 </section>
@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="max-h-[20rem] overflow-auto">
     @for (producer of producerList; track $index) {
     <div class="mb-2 flex items-center justify-between">
       <div class="flex items-center mr-2">

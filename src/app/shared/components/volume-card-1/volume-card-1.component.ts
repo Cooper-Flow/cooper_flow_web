@@ -4,7 +4,7 @@ import { Component, Input } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { DateTime } from '@app/resources/handlers/datetime';
 import { Regex } from '@app/resources/handlers/regex';
-import { SheetVolumeComponent } from '../sheet-volume/sheet-volume.component';
+import { SheetVolumeComponent } from '../sheets/sheet-volume/sheet-volume.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogConfirmComponent } from '../dialog-confirm/dialog-confirm.component';
 import { VolumeService } from '@app/services/user/volume.service';

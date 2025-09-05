@@ -12,7 +12,6 @@ import { MaterialService } from '@app/services/user/material.service';
 import { RegisterService } from '@app/services/user/register.service';
 import { VolumeService } from '@app/services/user/volume.service';
 import { DialogTransformComponent } from '@app/shared/components/dialog-transform/dialog-transform.component';
-import { single } from 'rxjs';
 
 @Component({
   selector: 'app-track-transform',
@@ -30,7 +29,8 @@ export class TrackTransformComponent implements OnInit {
   public exitList: Array<any> = [];
   public sizeList: Array<any> = [];
   public typeList: Array<any> = [];
-  public removeWeight: number = 0
+  public removeWeight: number = 0;
+  public loadingPoint = signal(0);
 
   constructor(
     public navigationService: NavigationService,
@@ -54,6 +54,13 @@ export class TrackTransformComponent implements OnInit {
     this.getExits();
     const location_id = this.activeRoute.snapshot.params['id'];
 
+    const template = this.activeRoute.snapshot.queryParams['template'];
+
+    if (template === 'exit') {
+      this.template.set(template)
+    }
+
+
     if (location_id) {
       this.getVolume(location_id)
     }
@@ -75,7 +82,7 @@ export class TrackTransformComponent implements OnInit {
   }
 
   get checkRemove() {
-    if(this.removeWeight > this.volumeData.weight) {
+    if (this.removeWeight > this.volumeData.weight) {
       return true
     }
     else {
@@ -110,7 +117,7 @@ export class TrackTransformComponent implements OnInit {
   }
 
   get limit() {
-    if(this.removeWeight > 0) {
+    if (this.removeWeight > 0) {
       return false
     } {
       return true
@@ -119,19 +126,31 @@ export class TrackTransformComponent implements OnInit {
 
   get checkLimit() {
     const amount_available = this.volumeData?.weight;
-    if(amount_available > this.removeWeight) {
+    if (amount_available > this.removeWeight) {
       return false
     } else {
       return true
     }
   }
 
-  public addRemove(){
-    this.removeWeight ++
+  public addRemove() {
+    this.removeWeight++;
+
+    if (this.volumeList.length === 1) {
+      this.volumeList[0].weight = this.removeWeight
+    }
   }
 
-  public removeRemove(){
-    this.removeWeight --
+  public removeRemove() {
+    this.removeWeight--;
+
+    if (this.volumeList.length === 1) {
+      this.volumeList[0].weight = this.removeWeight
+    } else {
+      this.volumeList.map(v => {
+        v.weight = 0
+      })
+    }
   }
 
   public getBackRoute(volume: any) {
@@ -152,7 +171,7 @@ export class TrackTransformComponent implements OnInit {
           this.snackService.open('Este volume não existe mais')
         } else {
           this.addVolume(data)
-          this.isLoading.set(false);
+          this.loadingPoint.update(value => value + 1);
         }
       },
       excp => {
@@ -167,17 +186,24 @@ export class TrackTransformComponent implements OnInit {
     this._locationService.combolist().subscribe(
       data => {
         this.locationList = data;
+        this.loadingPoint.update(value => value + 1);
       }
     )
   }
 
   public addVolume(data: any) {
 
+    let exit = '';
+
+    if (this.exitList?.length === 1) {
+      exit = this.exitList[0].id;
+    }
+
     const volume = {
       amount: 0,
       location_id: '',
       material_id: data?.Material?.id,
-      exit_id: '',
+      exit_id: exit,
       size: this.volumeData?.size,
       type: this.volumeData?.type,
       single: false,
@@ -190,7 +216,7 @@ export class TrackTransformComponent implements OnInit {
   public getTotalVolume(volume: any) {
     try {
       const material = this.materialList.find(m => m.id === volume?.material_id);
-      if(volume.single) {
+      if (volume.single) {
         return `${volume.amount} x ${volume.volume} kg = ${volume.amount * volume.volume} kg`
       } else {
         return `${volume.amount} x ${material.volume ? material.volume : '0'} kg = ${volume.amount * material.volume} kg`
@@ -205,7 +231,8 @@ export class TrackTransformComponent implements OnInit {
 
     this._materialService.combolist().subscribe(
       data => {
-        this.materialList = data
+        this.materialList = data;
+        this.loadingPoint.update(value => value + 1);
       },
     )
   }
@@ -233,7 +260,7 @@ export class TrackTransformComponent implements OnInit {
       }
 
       if ([null, '', undefined, false].includes(volume.location_id) && this.template() === 'movimentation') {
-        stop = 'Selecione a nova localização do volume';
+        stop = 'Selecione a nova pallete do volume';
       }
 
       if ([null, '', undefined, false].includes(volume.exit_id) && this.template() === 'exit') {
@@ -302,15 +329,25 @@ export class TrackTransformComponent implements OnInit {
     this._registerService.listExits().subscribe(
       data => {
         this.exitList = data;
-        this.isLoading.set(false)
+        this.loadingPoint.update(value => value + 1);
       }
     )
   }
 
   public setSingle(index: number, checked: boolean) {
-    if(checked) {
+    if (checked) {
       this.volumeList[index].amount = 1;
       this.volumeList[index].volume = 0;
+    }
+  }
+
+  public onWeightChange() {
+    if (this.volumeList.length === 1) {
+      this.volumeList[0].weight = this.removeWeight
+    } else {
+      this.volumeList.map(v => {
+        v.weight = 0
+      })
     }
   }
 }

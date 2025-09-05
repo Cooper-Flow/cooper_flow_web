@@ -33,6 +33,10 @@ import { SettingComponent } from './setting/setting.component';
 import { ReportDetailComponent } from './report/report-detail/report-detail.component';
 import { TrackExitFormComponent } from './track/track-exit-form/track-exit-form.component';
 import { TrackExitListComponent } from './track/track-exit-list/track-exit-list.component';
+import { PriceManagerComponent } from './price-manager/price-manager.component';
+import { ReportManagerComponent } from './report-manager/report-manager.component';
+import { PriceManagerDetailComponent } from './price-manager/price-manager-detail/price-manager-detail.component';
+import { A11yModule } from "@angular/cdk/a11y";
 
 
 @NgModule({
@@ -66,12 +70,16 @@ import { TrackExitListComponent } from './track/track-exit-list/track-exit-list.
     SettingComponent,
     ReportDetailComponent,
     TrackExitFormComponent,
-    TrackExitListComponent
+    TrackExitListComponent,
+    PriceManagerComponent,
+    ReportManagerComponent,
+    PriceManagerDetailComponent,
   ],
   imports: [
     CommonModule,
     UserRoutingModule,
-    SharedModule
-  ]
+    SharedModule,
+    A11yModule
+]
 })
 export class UserModule { }

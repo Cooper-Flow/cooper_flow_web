@@ -1,9 +1,9 @@
-import { Component, HostListener, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { SharedModule } from "../../shared/shared.module";
-import { MatSidenav } from '@angular/material/sidenav';
 import { NavigationService } from '@app/services/common/navigation.service';
 import { LoadingService } from '@app/services/common/loading.service';
+import { ProfileService } from '@app/services/user/profile.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -20,7 +20,8 @@ export class MainLayoutComponent implements OnInit {
   constructor(
     public navigationService: NavigationService,
     private _route: Router,
-    public loadingService: LoadingService
+    public loadingService: LoadingService,
+    public profileService: ProfileService
   ) {
     this._route.events.subscribe((val) => {
       if(this.displayMode() === 'mobile') {
@@ -30,6 +31,8 @@ export class MainLayoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getPermissions();
+
     const width = window.innerWidth;
     if(width >= 1024 ) {
       this.displayMode.set('desktop')
@@ -54,5 +57,11 @@ export class MainLayoutComponent implements OnInit {
     }
   }
 
-
+  public getPermissions() {
+    this.profileService.getPermission().subscribe(
+      data => {
+        this.navigationService.permissions = data;
+      }
+    )
+  }
 }

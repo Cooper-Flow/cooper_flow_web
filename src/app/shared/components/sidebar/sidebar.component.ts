@@ -16,7 +16,7 @@ export class SidebarComponent {
   constructor(
     public navigationService: NavigationService,
     private _router: Router
-  ) {}
+  ) { }
 
 
   public navigate(path: string) {
@@ -24,5 +24,22 @@ export class SidebarComponent {
     this._router.navigate([path])
   }
 
+  public checkNavigationCategory(item: any): boolean {
+    const childs = item.child;
+    const permissions = this.navigationService.permissions;
 
+    return childs.some((c: any) => permissions.includes(c.permission));
+  }
+
+
+  public checkNavigationItem(item: any) {
+    const permissions = this.navigationService.permissions;
+
+    if (permissions.includes(item.permission)) {
+      return true
+    } else {
+      return false
+    }
+
+  }
 }

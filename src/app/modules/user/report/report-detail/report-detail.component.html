@@ -11,14 +11,13 @@
   }
   }
   }
-
 </section>
 
 <ng-template #entryTemplate>
   <div class="mb-2 lg:flex items-center">
     <div class="mr-4 lg:mb-0 mb-4 flex items-center">
-      <app-title text="Registro de entrada" [icon]="icon"></app-title>
-      <span class="text-green-400 text-xl font-medium ml-2">E{{ registerData?.Entry?.id }}</span>
+      <app-title text="Registro" [icon]="icon"></app-title>
+      <span class="text-green-400 text-xl font-medium ml-2">Entrada {{ registerData?.Entry?.id }}</span>
     </div>
   </div>
 
@@ -74,7 +73,7 @@
       <div>
         <div class="mb-1 mt-[-10px]">
           <span class="text-sm"><span class="font-medium text-gray-700">Volumes iniciais ({{
-              registerData?.Entry?.Volume?.length }})</span></span>
+              registerData?.Entry?.VolumeEnter?.length }})</span></span>
         </div>
       </div>
 
@@ -95,7 +94,7 @@
           <span class="text-xs text-gray-400">({{ volume?.Material ? volume?.Material?.name : 'avulso' }})</span>
         </div>
         <div class="p-1 text-sm">
-          <span class="font-medium mr-1">Localização inicial:</span>
+          <span class="font-medium mr-1">Palete inicial:</span>
           <span>{{ volume?.Location?.name }}</span>
         </div>
       </div>
@@ -108,57 +107,46 @@
   <div class="mb-4 p-4">
     <div>
       <div class="mb-1 mt-[-10px]">
-        <span class="text-sm"><span class="font-medium text-gray-700">Situação atual dos volumes</span></span>
+        <span class="text-sm"><span class="font-medium text-gray-700">Situação atual dos volumes ({{
+            registerData?.Entry?.Volume?.length }})</span></span>
       </div>
     </div>
 
-    @for (volume of registerData?.Entry?.Volume; track $index) {
-    <div class="py-2 px-3 rounded-md border border-gray-400 mb-2">
-      <div class="flex items-center justify-between">
-        <div class="mr-2 flex items-center">
-          <div class="mr-2">
-            <app-label [text]="volume.product_name"></app-label>
-          </div>
-          <span class="text-xs text-gray-800 rounded-full mr-2">• {{ volume.type }} •</span>
-          <span class="text-xs text-gray-800 rounded-full">{{ volume.size }}</span>
-        </div>
-
-        <div>
-          <button mat-icon-button [routerLink]="'/in/track/location/detail/' + volume?.Location?.id" class="scale-90" matTooltip="Ver volume">
-            <mat-icon>open_in_new</mat-icon>
-          </button>
-        </div>
+    <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-2">
+      @for (volume of registerData?.Entry?.Volume; track $index) {
+      <div [matMenuTriggerFor]="menu" class="transform active:scale-95 transition duration-150">
+        <app-card-volume [item]="volume" />
       </div>
-      <div class="p-1 text-sm">
-        <span class="font-medium mr-1">{{ regex.formatToTwoDigits(volume?.weight) + ' kg' }}</span>
-        <!-- <span class="font-medium mr-2">• {{ volume.volume }} kg</span> -->
-        <span class="text-xs text-gray-400">({{ volume?.Material ? volume?.Material?.name : 'avulso'}})</span>
-      </div>
-      <div class="p-1 text-sm">
-        <span class="font-medium mr-1">Localização inicial:</span>
-        <span>{{ volume?.Location?.name }}</span>
-      </div>
+      <mat-menu #menu="matMenu" xPosition="before">
+        <button mat-menu-item (click)="openLocationDialog(volume?.Location?.id)"
+          class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+          <mat-icon class="mr-2">pallet</mat-icon>
+          Ver palete
+        </button>
+      </mat-menu>
+      }
     </div>
-    }
+
   </div>
 </ng-template>
 
 <ng-template #historicTemplate>
   <div class="mb-4 p-4">
     @for (log of registerData?.Entry?.VolumeLog; track $index) {
-      <div class="mb-4 leading-3">
-        <div>
-          <span class="text-xs text-gray-400">{{ dateTime.convertToBRTime(log.created_at) }} por {{ log?.User?.Person?.name }}</span>
-        </div>
-        <div>
-          <span class="text-orange-400 text-xl mr-1">•</span>
-          <span class="text-sm">{{ log?.origin_history}}</span>
-        </div>
-        <!-- <div>
+    <div class="mb-4 leading-3">
+      <div>
+        <span class="text-xs text-gray-400">{{ dateTime.convertToBRTime(log.created_at) }} por {{
+          log?.User?.Person?.name }}</span>
+      </div>
+      <div>
+        <span class="text-orange-400 text-xl mr-1">•</span>
+        <span class="text-sm">{{ log?.origin_history}}</span>
+      </div>
+      <!-- <div>
           <span class="text-green-400 text-xl mr-1">•</span>
           <span class="text-sm">{{ log?.generated_history}}</span>
         </div> -->
-      </div>
+    </div>
     }
   </div>
 </ng-template>
@@ -166,8 +154,8 @@
 <ng-template #exitTemplate>
   <div class="mb-2 lg:flex items-center">
     <div class="mr-4 lg:mb-0 mb-4 flex items-center">
-      <app-title text="Registro de entrada" [icon]="icon"></app-title>
-      <span class="text-red-400 text-xl font-medium ml-2">S{{ registerData?.Exit?.id }}</span>
+      <app-title text="Registro" [icon]="icon"></app-title>
+      <span class="text-red-400 text-xl font-medium ml-2">Saída{{ registerData?.Exit?.id }}</span>
     </div>
   </div>
 
@@ -226,22 +214,12 @@
       </div>
     </div>
 
-    @for (volume of registerData?.Exit?.Volume; track $index) {
-    <div class="py-2 px-3 rounded-md border border-gray-400 mb-2">
-      <div class="flex items-center justify-between">
-        <div class="mr-2 flex items-center">
-          <div class="mr-2">
-            <app-label [text]="volume.product_name"></app-label>
-          </div>
-          <span class="text-xs text-gray-800 rounded-full mr-2">• {{ volume.type }} •</span>
-          <span class="text-xs text-gray-800 rounded-full">{{ volume.size }}</span>
-        </div>
+    <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-2">
+      @for (volume of registerData?.Exit?.Volume; track $index) {
+      <div>
+        <app-card-volume [item]="volume" />
       </div>
-      <div class="p-1 text-sm">
-        <span class="font-medium mr-1">{{ regex.formatToTwoDigits(volume?.weight) + ' kg' }}</span>
-        <span class="text-xs text-gray-400">({{ volume.Material ? volume.Material.name : 'Avulso'}})</span>
-      </div>
+      }
     </div>
-    }
   </div>
 </ng-template>

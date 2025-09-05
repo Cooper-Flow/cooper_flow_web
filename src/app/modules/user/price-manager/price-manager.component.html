@@ -1,0 +1,164 @@
+<section class="lg:p-4 p-2">
+  <ng-container *ngTemplateOutlet="mainTemplate"></ng-container>
+</section>
+
+<ng-template #mainTemplate>
+  <div class="mr-4 lg:mb-0 mb-4 flex items-center pt-2">
+    <app-title [text]="title" [icon]="icon"></app-title>
+  </div>
+  <div class="py-2 flex justify-between items-center">
+  </div>
+
+  <div>
+    @switch (selectedValue) {
+    @case ('list') {
+    <ng-container *ngTemplateOutlet="listTemp"></ng-container>
+    }
+    @case ('producer') {
+    <ng-container *ngTemplateOutlet="producerTemp"></ng-container>
+    }
+    }
+  </div>
+</ng-template>
+
+<ng-template #listTemp>
+
+</ng-template>
+
+<ng-template #producerTemp>
+  <div>
+
+    <div class="pl-1 pb-4 border-b border-gray-300 mb-4">
+      @if (selectedProducer()) {
+      <mat-card appearance="outlined" class="p-2">
+        <div class="flex items-center mr-2">
+          <div class="flex items-center">
+            <div class="mr-1 pt-2">
+              <mat-icon class="text-gray-600 scale-75">person</mat-icon>
+            </div>
+            <div class="mr-2">
+              <span class="text-sm font-medium">{{ producer.name }}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center">
+            <button mat-icon-button type="button" (click)="dialogProducer()" matTooltip="Selecionar outro produtor">
+              <mat-icon class="text-gray-500">sync_alt</mat-icon>
+            </button>
+
+            <button mat-icon-button type="button" (click)="removeProducerFilter()"
+              matTooltip="Remover filtro de produtor">
+              <mat-icon class="text-gray-500">cancel</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap">
+          <div class="mr-2">
+            <span class="text-xs">CAD/PRO: {{ producer?.Producer?.cad_pro }}</span>
+          </div>
+
+          <div class="mr-2">
+            <span class="text-xs">GGN: {{ producer?.Producer?.ggn }}</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="mr-2">
+            <span class="text-xs">Endereço: {{ producer?.address }}</span>
+          </div>
+        </div>
+      </mat-card>
+      } @else {
+      <div class="">
+        <button mat-raised-button type="button" (click)="dialogProducer()">
+          <mat-icon>add</mat-icon>
+          Selecionar produtor
+        </button>
+      </div>
+      }
+    </div>
+
+    <div>
+      @if (isLoading()) {
+      <app-loading />
+      } @else {
+      <div>
+
+        @if(pricingList.length === 0) {
+        <div class="">
+          <app-zero-length text="Sem precificações"></app-zero-length>
+        </div>
+        } @else {
+        <div>
+
+          <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+              <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3">
+                    Identificação
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                    Responsável
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                    Data
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                    Status
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of pricingList; track $index) {
+                <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 border-gray-200">
+                  <th scope="row" class="px-6 py-1 font-medium text-gray-900 whitespace-nowrap">
+                    {{ item.id }}
+                  </th>
+                  <td class="px-6 py-1 text-xs">
+                    {{ item.User?.Person?.name }}
+                  </td>
+                  <td class="px-6 py-1  text-xs">
+                    {{ dateTime.convertToBRTime( item.created_at ) }}
+                  </td>
+                  <td class="px-6 py-1  text-xs font-medium">
+                    @switch (item.status) {
+                    @case ('ongoing') {
+                    <span class="text-orange-400">Andamento</span>
+                    }
+                    @case ('closed') {
+                    <span class="text-green-400">Concluído</span>
+                    }
+                    }
+                  </td>
+                  <td class="px-6 py-1  text-xs">
+                    <button mat-icon-button [routerLink]="'/in/price-manager/' + item.id"
+                      matTooltip="Detalhar precificação" class="hover:bg-gray-200">
+                      <mat-icon>search</mat-icon>
+                    </button>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <div>
+          <mat-paginator (page)="pageEvent($event)" [length]="total" [pageSize]="page_size"
+            [pageSizeOptions]="[5, 10, 25, 100]" [pageIndex]="page_index"></mat-paginator>
+        </div>
+        }
+
+
+      </div>
+      }
+    </div>
+
+  </div>
+</ng-template>

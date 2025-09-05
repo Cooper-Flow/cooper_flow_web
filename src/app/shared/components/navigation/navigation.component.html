@@ -7,29 +7,52 @@
           <mat-icon>menu</mat-icon>
         </button>
       </div>
-      <div [routerLink]="navigationService.getPATH('track')" class="hover:bg-gray-200 rounded-md p-1 hover:cursor-pointer">
+      <div [routerLink]="navigationService.getPATH('track')"
+        class="hover:bg-gray-200 rounded-md p-1 hover:cursor-pointer">
         <img [src]="imagesService.logo" alt="" class="h-[30px]">
       </div>
     </div>
 
     <div class="flex justify-end items-center px-2">
       <div class="mr-4">
+        <button mat-icon-button routerLink="/in/track/">
+          <mat-icon>account_tree</mat-icon>
+        </button>
+      </div>
+      <div class="mr-4">
+        <button mat-icon-button [matMenuTriggerFor]="menu"
+          class=" !text-orange-500 flex items-center justify-center">
+          <mat-icon>add</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu" class="mb-2">
+          <button mat-menu-item routerLink="/in/track/enter" class="!text-green-500 flex items-center mr-2"
+            matTooltip="Entrada de produtos">
+            <mat-icon class="!text-green-500">move_to_inbox</mat-icon>
+            Entrada</button>
+
+          <button mat-menu-item routerLink="/in/track/exit/init" class="!text-blue-500 flex items-center"
+            matTooltip="Saída de produtos">
+            <mat-icon class="!text-blue-500">local_shipping</mat-icon>
+            Saída</button>
+        </mat-menu>
+      </div>
+      <div class="mr-4">
         <button mat-icon-button routerLink="/in/track/exit/list">
           <mat-icon [matBadge]="navigationService.hasExits()" [matBadgeHidden]="checkExits">local_shipping</mat-icon>
         </button>
       </div>
       <div class="lg:flex hidden">
-        <button mat-button [matMenuTriggerFor]="menu" class="!text-black">
+        <button mat-button [matMenuTriggerFor]="menu2" class="!text-black">
           <mat-icon>person</mat-icon>
           {{ user_name() }}
         </button>
       </div>
       <div class="lg:hidden flex">
-        <button mat-icon-button [matMenuTriggerFor]="menu" class="!text-black">
+        <button mat-icon-button [matMenuTriggerFor]="menu2" class="!text-black">
           <mat-icon>person</mat-icon>
         </button>
       </div>
-      <mat-menu #menu="matMenu">
+      <mat-menu #menu2="matMenu">
         <div class="text-center text-sm border-b border-gray-300 pb-1 lg:hidden flex justify-center">
           <span>{{ regex.getFirstNameAndLastNameInitial(user_name()) }}</span>
         </div>

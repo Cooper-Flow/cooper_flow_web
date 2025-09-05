@@ -1,5 +1,5 @@
 <section class="lg:p-4 p-2">
-  @if(isLoading()) {
+  @if(loadingPoint() < 4) {
   <app-loading></app-loading>
   } @else {
   <ng-container *ngTemplateOutlet="mainTemplate"></ng-container>
@@ -13,14 +13,26 @@
     <div class="mb-4 flex items-center justify-between">
       <div class="mr-4 lg:mb-0 mb-4 flex items-center">
         <div class="mr-4">
+          @switch (template()) {
+          @case ('movimentation') {
           <app-title text="Movimentar volume" icon="change_circle"></app-title>
+          }
+          @case ('exit') {
+          <app-title text="Saída de volume" icon="local_shipping"></app-title>
+          }
+          }
         </div>
       </div>
-      <div>
-        <button mat-button routerLink="/in/track" class="!text-primary flex items-center"
+      <div class="flex items-center">
+        <button mat-button routerLink="/in/track" class="!text-primary flex items-center mr-2"
           matTooltip="Voltar para rastreabilidade">
           <mat-icon>arrow_back</mat-icon>
           Voltar</button>
+        <div class="flex justify-center">
+          <button mat-flat-button (click)="send()">
+            Salvar
+          </button>
+        </div>
       </div>
     </div>
 
@@ -28,14 +40,14 @@
       <div class="mb-2">
         <div class="text-sm mb-1">
           <span class="font-medium">Registro: </span>
-          <span class="text-green-400 font-medium">E{{ volumeData?.Entry?.id }} </span>
+          <span class="text-green-400 font-medium">Entrada {{ volumeData?.Entry?.id }} </span>
         </div>
         <div class="text-sm mb-1">
           <span class="font-medium">Produtor: </span>
           <span>{{ volumeData?.Entry?.Producer?.Person?.name }} </span>
         </div>
         <div class="text-sm mb-1">
-          <span class="font-medium">Localização atual: </span>
+          <span class="font-medium">Palete atual: </span>
           <span>{{ volumeData?.Location?.name }} </span>
           <span>({{ volumeData?.Location?.Sector?.name }})</span>
         </div>
@@ -49,206 +61,205 @@
         </div>
       </div>
 
-      <mat-card class="border-l-2 border-orange-400 mb-4 p-1">
-        <div class="px-4">
-          <div class="mr-2 flex items-center">
-            <div class="mr-2">
-              <span class="font-medium text-sm">{{ volumeData?.Product?.name }}</span>
-            </div>
-            <span class="text-sm rounded-full mr-2">• {{ volumeData?.type }} •</span>
-            <span class="text-sm rounded-full">{{ volumeData?.size }}</span>
-          </div>
-        </div>
+      <div class="w-full h-[1px] bg-gray-200 my-3"></div>
 
-        <div class="sm:flex sm:text-sm text-xs">
-          <mat-card class="p-2 w-full m-1" appearance="outlined">
-            <div>
-              <span class="text-green-400">Disponível</span>
-            </div>
-            <div>
-              <span class="font-normal mr-1"> {{ regex.formatToTwoDigits(volumeData?.weight) }} kg</span>
-              <span class="text-gray-400">({{ volumeData.Material.name }})</span>
-            </div>
-          </mat-card>
+      <div class="md:grid grid-cols-2 gap-2">
 
-          <mat-card class="p-2 w-full m-1" appearance="outlined">
-            <div class="text-sm mb-1">
-              <span class="text-orange-500">Retirar</span>
-            </div>
-            <div class="flex items-center mb-[8px]">
-              <button mat-icon-button (click)="addRemove()" class="!bg-orange-400 !text-white">
-                <mat-icon>add</mat-icon>
-              </button>
-              <div class="min-w-[150px]">
-                <input type="number" [(ngModel)]="removeWeight" [ngModelOptions]="{standalone: true}"
-                  class="mx-1 border border-gray-300 rounded-md px-4 py-2 w-[150px]">
-              </div>
-              <button mat-icon-button (click)="removeRemove()" [disabled]="limit"
-                [class]="limit ? '!bg-gray-200':'!bg-orange-400 !text-white'">
-                <mat-icon>remove</mat-icon>
-              </button>
-              <div class="mx-2">
-                <span>KG</span>
+        <div>
+          <mat-card class="p-2 mb-2">
+            <div class="py-4">
+              <div class=" flex items-center">
+                <div class="">
+                  <span class="font-medium text-sm">{{ volumeData?.Product?.name }}</span>
+                </div>
+                <span class="text-sm rounded-full ">• {{ volumeData?.type }} •</span>
+                <span class="text-sm rounded-full">{{ volumeData?.size }}</span>
               </div>
             </div>
-            @if (checkRemove) {
-            <div>
-              <span class="text-red-500">Valor de retirada superior que o disponível</span>
+
+            <div class="">
+              <mat-card class="p-2 w-full mb-2" appearance="outlined">
+                <div>
+                  <span class="text-green-400">Disponível</span>
+                </div>
+                <div>
+                  <span class="font-normal mr-1"> {{ regex.formatToTwoDigits(volumeData?.weight) }} kg</span>
+                  <span class="text-gray-400">({{ volumeData.Material.name }})</span>
+                </div>
+              </mat-card>
+
+              <mat-card class="p-2 w-full mb-2" appearance="outlined">
+                <div class="text-sm mb-1">
+                  <span class="text-orange-500">Retirar</span>
+                </div>
+                <div class="flex items-center mb-[8px]">
+                  <button mat-icon-button (click)="addRemove()" class="!bg-orange-400 !text-white">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                  <div class="min-w-[150px]">
+                    <input type="number" [(ngModel)]="removeWeight" [ngModelOptions]="{standalone: true}"
+                    (ngModelChange)="onWeightChange()"
+                      class="mx-1 border border-gray-300 rounded-md px-4 py-2 w-[150px]">
+                  </div>
+                  <button mat-icon-button (click)="removeRemove()" [disabled]="limit"
+                    [class]="limit ? '!bg-gray-200':'!bg-orange-400 !text-white'">
+                    <mat-icon>remove</mat-icon>
+                  </button>
+                  <div class="mx-2">
+                    <span>KG</span>
+                  </div>
+                </div>
+                @if (checkRemove) {
+                <div>
+                  <span class="text-red-500">Valor de retirada superior que o disponível</span>
+                </div>
+                }
+                @if (notAlocate < 0) { <div>
+                  <span class="text-red-500">ATENÇÃO: {{ notAlocate }} kg a mais sendo movimentado</span>
             </div>
             }
-            @if (notAlocate < 0) { <div>
-              <span class="text-red-500">ATENÇÃO: {{ notAlocate }} kg a mais sendo movimentado</span>
-        </div>
-        }
-      </mat-card>
+          </mat-card>
 
-      <mat-card class="p-2 w-full m-1" appearance="outlined">
-        <div class="text-sm">
-          <span class="text-gray-500">Restante</span>
+          <mat-card class="p-2 w-full mb-2" appearance="outlined">
+            <div class="text-sm">
+              <span class="text-gray-500">Restante</span>
+            </div>
+            <div>
+              <span>{{ remaining}} kg</span>
+            </div>
+          </mat-card>
         </div>
+        </mat-card>
+      </div>
+
+      <div>
         <div>
-          <span>{{ remaining}} kg</span>
-        </div>
-      </mat-card>
-    </div>
-    </mat-card>
-
-    <div class="flex justify-center mb-4">
-      <mat-button-toggle-group [(ngModel)]="template">
-        <mat-button-toggle value="movimentation">Movimentar</mat-button-toggle>
-        <mat-button-toggle value="exit">Saída</mat-button-toggle>
-      </mat-button-toggle-group>
-    </div>
-
-    <div class="flex justify-center mb-4">
-      <mat-icon class="scale-150 !text-gray-600">arrow_downward</mat-icon>
-    </div>
-
-    <div class="w-full h-[1px] bg-gray-200 mb-1"></div>
-
-    <div>
-
-      <div class="grid lg:grid-cols-2 grid-cols-1 gap-4">
-        @for (volume of volumeList; track $index) {
-        <div class="lg:col-span-1">
-          <div class="pl-1">
-            <span class="text-sm font-medium">Novo volume {{ $index + 1 }}</span>
+          <div class="flex justify-center my-4">
+            <button mat-flat-button (click)="addVolume(volumeData)" class="!bg-orange-400 !text-white">
+              <mat-icon>add</mat-icon> Adicionar novo volume
+            </button>
           </div>
-          <mat-card class="p-3 mb-4 bg-white">
-            <div class="text-end">
-              <span (click)="deleteVolume($index)" class="text-xs text-blue-400 hover:underline">Remover</span>
+          <div>
+            <div class="text-center mb-2">
+              @if (volumeList.length > 1) {
+              <span class="text-xs text-gray-500">*Serão criados novos volumes nos paletes selecionados.</span>
+              }
+              @else {
+              <span class="text-xs text-gray-500">*Será criado um novo volume no palete selecionado.</span>
+              }
+
             </div>
 
-            <div class="sm:flex mb-2">
-              <div>
-                <label class="text-xs text-gray-400">Tipo</label>
-                <select [(ngModel)]="volume.type" [ngModelOptions]="{standalone: true}"
-                  class=" text-gray-900 text-sm rounded-l-lg border border-gray-300 block p-2.5 sm:min-w-[175px] min-w-full  bg-gray-50">
-                  @for (type of typeList; track $index) {
-                  <option [value]="type?.name">{{ type?.name }}</option>
-                  }
-                </select>
-              </div>
-              <div class="w-full">
-                <label class="text-xs text-gray-400">Tamanho</label>
-                <select [(ngModel)]="volume.size" [ngModelOptions]="{standalone: true}"
-                  class=" text-gray-900 text-sm border border-gray-300 block p-2.5 sm:min-w-[175px] min-w-full bg-gray-50 rounded-e-lg">
-                  @for (size of sizeList; track $index) {
-                  <option [value]="size?.name">{{ size?.name }}</option>
-                  }
-                </select>
-              </div>
+            @if (remaining < 0) { <div class="mb-4 text-center">
+              <span class="text-xs text-red-500">A quatidade retirada não pode ser superior a quantidade
+                disponível.</span>
+          </div>
+          }
+        </div>
+
+        <div class="p-2">
+          @for (volume of volumeList; track $index) {
+          <div class="lg:col-span-1">
+            <div class="pl-1">
+              <span class="text-sm font-medium">Novo volume {{ $index + 1 }}</span>
             </div>
-            <!--
+            <mat-card class="p-3 mb-4 bg-white">
+              <div class="text-end">
+                <span (click)="deleteVolume($index)" class="text-xs text-blue-400 hover:underline">Remover</span>
+              </div>
+
+              <div class="sm:flex mb-2">
+                <div>
+                  <label class="text-xs text-gray-400">Tipo</label>
+                  <select [(ngModel)]="volume.type" [ngModelOptions]="{standalone: true}"
+                    class=" text-gray-900 text-sm rounded-l-lg border border-gray-300 block p-2.5 md:min-w-[150px] min-w-full  bg-gray-50">
+                    @for (type of typeList; track $index) {
+                    <option [value]="type?.name">{{ type?.name }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="w-full">
+                  <label class="text-xs text-gray-400">Tamanho</label>
+                  <select [(ngModel)]="volume.size" [ngModelOptions]="{standalone: true}"
+                    class=" text-gray-900 text-sm border border-gray-300 block p-2.5 md:min-w-[150px] min-w-full bg-gray-50 rounded-e-lg">
+                    @for (size of sizeList; track $index) {
+                    <option [value]="size?.name">{{ size?.name }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+              <!--
             <div class="py-1">
               <mat-slide-toggle [(ngModel)]="volume.single" [ngModelOptions]="{standalone: true}"
                 (ngModelChange)="setSingle($index, $event)">Volume avulso</mat-slide-toggle>
             </div> -->
 
-            <div class="mb-1">
               <div class="mb-1">
-                <label class="text-xs text-gray-500">Peso</label>
-                <div class="flex items-center">
-                  <input type="number" [(ngModel)]="volume.weight" [ngModelOptions]="{standalone: true}"
-                  class="mr-2 rounded-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 lg:min-w-[200px] max-w-[200px] text-sm border-gray-300 p-2.5">
-                  <span>KG</span>
+                <div class="mb-1">
+                  <label class="text-xs text-gray-500">Peso</label>
+                  <div class="flex items-center">
+                    <input type="number" [(ngModel)]="volume.weight" [ngModelOptions]="{standalone: true}"
+                      class="mr-2 rounded-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 lg:min-w-[200px] max-w-[200px] text-sm border-gray-300 p-2.5">
+                    <span>KG</span>
+                  </div>
+                </div>
+                <div class="w-full">
+                  <label class="text-xs text-gray-400">Material</label>
+                  <select [(ngModel)]="volume.material_id" [ngModelOptions]="{standalone: true}"
+                    class=" text-gray-900 text-sm border border-gray-300 block p-2.5 w-full bg-gray-50 rounded-lg">
+                    @for (material of materialList; track $index) {
+                    <option [ngValue]="material.id">{{ material?.name }}</option>
+                    }
+                  </select>
                 </div>
               </div>
-              <div class="w-full">
-                <label class="text-xs text-gray-400">Material</label>
-                <select [(ngModel)]="volume.material_id" [ngModelOptions]="{standalone: true}"
-                  class=" text-gray-900 text-sm border border-gray-300 block p-2.5 w-full bg-gray-50 rounded-lg">
-                  @for (material of materialList; track $index) {
-                  <option [ngValue]="material.id">{{ material?.name }}</option>
-                  }
-                </select>
-              </div>
-            </div>
 
-            <div class="mb-4">
-              @switch (template()) {
-              @case ("movimentation") {
-              <div class="w-full mb-[5px]">
-                <label class="text-xs text-gray-500">Nova localização</label>
-                <select [(ngModel)]="volume.location_id" [ngModelOptions]="{standalone: true}"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                  @for (location of locationList; track $index) {
-                  <option selected [ngValue]="location.id">{{ location.name }}</option>
-                  }
-                </select>
+              <div class="mb-4">
+                @switch (template()) {
+                @case ("movimentation") {
+                <div class="w-full mb-[5px]">
+                  <label class="text-xs text-gray-500">Novo palete</label>
+                  <select [(ngModel)]="volume.location_id" [ngModelOptions]="{standalone: true}"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                    @for (location of locationList; track $index) {
+                    <option selected [ngValue]="location.id">{{ location.name }}</option>
+                    }
+                  </select>
+                </div>
+                }
+                @case ("exit") {
+                <div class="w-full mb-[5px]">
+                  <label class="text-xs text-gray-500">Saída em andamento</label>
+                  <select [(ngModel)]="volume.exit_id" [ngModelOptions]="{standalone: true}"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                    @for (exit of exitList; track $index) {
+                    <option [ngValue]="exit.id">Saída {{ exit.id }} - {{ exit?.Person?.name }}</option>
+                    }
+                  </select>
+                </div>
+                }
+                }
               </div>
-              }
-              @case ("exit") {
-              <div class="w-full mb-[5px]">
-                <label class="text-xs text-gray-500">Saída em andamento</label>
-                <select [(ngModel)]="volume.exit_id" [ngModelOptions]="{standalone: true}"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                  @for (exit of exitList; track $index) {
-                  <option selected [ngValue]="exit.id">S{{ exit.id }} - {{ exit?.Person?.name }}</option>
-                  }
-                </select>
-              </div>
-              }
-              }
-            </div>
 
-          </mat-card>
+            </mat-card>
+          </div>
+          }
         </div>
-        }
       </div>
     </div>
-
-    <div class="flex justify-center mb-4">
-      <button mat-flat-button (click)="addVolume(volumeData)" class="!bg-orange-400 !text-white">
-        <mat-icon>add</mat-icon> Adicionar novo volume
-      </button>
-    </div>
-
-    <div class="w-full h-[1px] bg-gray-200 mb-1"></div>
-
-    <div>
-      <div class="text-center mb-2">
-        @if (volumeList.length > 1) {
-        <span class="text-xs text-gray-500">*Serão criados novos volumes nas localizações selecionadas.</span>
-        }
-        @else {
-        <span class="text-xs text-gray-500">*Será criado um novo volume na localização selecionada.</span>
-        }
-
-      </div>
-
-      @if (remaining < 0) { <div class="mb-4 text-center">
-        <span class="text-xs text-red-500">A quatidade retirada não pode ser superior a quantidade
-          disponível.</span>
-    </div>
-    }
   </div>
 
-  <div class="flex justify-center">
-    <button mat-flat-button (click)="send()">
-      Salvar
-    </button>
-  </div>
+  <!-- <div class="flex justify-center mb-4">
+      <mat-button-toggle-group [(ngModel)]="template">
+        <mat-button-toggle value="movimentation">Movimentar</mat-button-toggle>
+        <mat-button-toggle value="exit">Saída</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div> -->
+
+  <!-- <div class="flex justify-center mb-4">
+      <mat-icon class="scale-150 !text-gray-600">arrow_downward</mat-icon>
+    </div> -->
+
   </div>
   </div>
 </ng-template>

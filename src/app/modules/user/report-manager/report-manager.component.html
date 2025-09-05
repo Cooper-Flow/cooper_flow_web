@@ -1,0 +1,355 @@
+<section class="lg:p-4 p-2">
+  <ng-container *ngTemplateOutlet="mainTemplate"></ng-container>
+</section>
+
+<ng-template #mainTemplate>
+  <div class="mr-4 lg:mb-2 mb-4 flex items-center pt-2">
+    <app-title [text]="title" [icon]="icon"></app-title>
+  </div>
+  <div class="py-2 flex justify-between items-center">
+    <!-- <mat-button-toggle-group class="!rounded-lg" (change)="onToggleChange($event)" [(ngModel)]="selectedValue">
+      <mat-button-toggle value="producer">Produtor</mat-button-toggle>
+    </mat-button-toggle-group> -->
+
+    <div class="flex items-center">
+      <div class="lg:w-[150px] w-full mr-2">
+        <select [(ngModel)]="filter" [ngModelOptions]="{standalone: true}" (ngModelChange)="setFilter()"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+          <option value="entry">Entradas</option>
+          <option value="exit">Saídas</option>
+        </select>
+      </div>
+
+      <div class="">
+        <div class="lg:w-[300px] w-full mr-4">
+          <input type="text" id="field" placeholder="Filtrar por lote" [(ngModel)]="batch"
+            [ngModelOptions]="{standalone: true}" (ngModelChange)="setFilter()"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" />
+        </div>
+      </div>
+    </div>
+
+    @if(filter === 'exit') {
+    <div class="w-[12rem]">
+      <button mat-flat-button (click)="createPricing()" class="" [disabled]="pricingVolumesList.length === 0">
+        <mat-icon>note_add</mat-icon>
+        Precificar ({{ pricingVolumesList.length }})
+      </button>
+    </div>
+    }
+  </div>
+  <div>
+    <ng-container *ngTemplateOutlet="mainTemp"></ng-container>
+  </div>
+</ng-template>
+
+<ng-template #mainTemp>
+  <div>
+
+    <div class="pb-2">
+      @if (selectedProducer()) {
+      <mat-card appearance="outlined" class="p-2">
+        <div class="flex items-center mr-2">
+          <div class="flex items-center">
+            <div class="mr-1 pt-2">
+              <mat-icon class="text-gray-600 scale-75">person</mat-icon>
+            </div>
+            <div class="mr-2">
+              <span class="text-sm font-medium">{{ producer.name }}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center">
+            <button mat-icon-button type="button" (click)="dialogProducer()" matTooltip="Selecionar outro produtor">
+              <mat-icon class="text-gray-500">sync_alt</mat-icon>
+            </button>
+
+            <button mat-icon-button type="button" (click)="removeProducerFilter()"
+              matTooltip="Remover filtro de produtor">
+              <mat-icon class="text-gray-500">cancel</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap">
+          <div class="mr-2">
+            <span class="text-xs">CAD/PRO: {{ producer?.Producer?.cad_pro }}</span>
+          </div>
+
+          <div class="mr-2">
+            <span class="text-xs">GGN: {{ producer?.Producer?.ggn }}</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="mr-2">
+            <span class="text-xs">Endereço: {{ producer?.address }}</span>
+          </div>
+        </div>
+      </mat-card>
+      } @else {
+      <div class="mt-4 flex">
+        <button mat-raised-button type="button" (click)="dialogProducer()">
+          <mat-icon>search</mat-icon>
+          Filtrar por produtor
+        </button>
+      </div>
+      }
+    </div>
+
+    @switch (filter) {
+    @case ('entry') {
+    <ng-container *ngTemplateOutlet="entryTemp"></ng-container>
+    }
+    @case ('exit') {
+    <ng-container *ngTemplateOutlet="exitTemp"></ng-container>
+    }
+    }
+
+  </div>
+</ng-template>
+
+
+<ng-template #entryTemp>
+  <div class="pt-2">
+    @if (isLoading()) {
+    <app-loading />
+    } @else {
+    @if (reportList.length === 0) {
+    <div>
+      <app-zero-length text="Nenhum resultado encontrado" />
+    </div>
+    }
+    <div class="">
+      @for (entry of reportList; track $index) {
+      <div class="border-t-1 border-gray-400 my-4">
+        <mat-card class="py-2 px-4">
+          <div class="p-2">
+            <div class="">
+              <div>
+                <span class="text-green-600 font-medium">Entrada {{ entry.id }}</span>
+              </div>
+              <!-- <span>•</span> -->
+              <div class="flex gap-2">
+                <span class="text-gray-500 text-xs">Lote: {{ entry.batch ?? '---' }}</span>
+                <span class="text-gray-500 text-xs">•</span>
+                <span class="text-gray-500 text-xs">Talhão: {{ entry.field ?? '---' }}</span>
+                <span class="text-gray-500 text-xs">•</span>
+                <span class="text-gray-500 text-xs"> {{ dateTime.convertToBRTime(entry.created_at)}}</span>
+              </div>
+            </div>
+          </div>
+
+          <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+            <mat-tab label="Entrada">
+
+              <div class="flex flex-wrap py-2 gap-2">
+                @for (item of entry.VolumeEnter; track $index) {
+                <div class="mr-2">
+                  <div>
+                    <span class="text-gray-600 text-xs">Localização inicial: {{ item?.Location?.name ?? '' }}</span>
+                  </div>
+                  <app-card-volume [item]="item" [disableHover]="true" />
+                </div>
+                }
+              </div>
+
+            </mat-tab>
+            <mat-tab label="Em processamento">
+
+              <div class="flex flex-wrap py-2 gap-2">
+                @for (item of entry.Volume; track $index) {
+                @if (!item.exited) {
+                <div class="mr-2">
+                  <div>
+                    <span class="text-gray-600 text-xs">Localização atual: {{ item?.Location?.name ?? '' }}</span>
+                  </div>
+                  <app-card-volume [item]="item" [disableHover]="true" />
+                </div>
+                }
+                }
+              </div>
+
+            </mat-tab>
+            <mat-tab label="Saída">
+
+              <div class="flex flex-wrap py-2 gap-2">
+                @for (item of entry.Volume; track $index) {
+                @if (item.exited) {
+                <div class="mr-2">
+                  <div>
+                    <div>
+                      <span class="text-gray-600 text-xs">Incluso na saída: {{ item.Exit.id ?? '' }}</span>
+                    </div>
+                    <div>
+                      <span class="text-gray-600 text-xs">Situação:
+                        @switch(item.Exit.status) {
+                        @case ('closed') {
+                        Encerrado
+                        }
+                        @case ('ongoing') {
+                        Andamento
+                        }
+                        }
+                      </span>
+                    </div>
+                  </div>
+                  <app-card-volume [item]="item" [disableHover]="true" />
+                  @if (item.PricingItem?.length > 0) {
+                  <div class="border-[1px] border-gray-400 rounded-b-lg px-2 py-1 flex items-center flex-wrap gap-2">
+                    <div>
+                      <span class="text-xs text-gray-400">Precificações</span>
+                    </div>
+                    @for (pricing of item.PricingItem; track $index) {
+                    <div>
+                      <div [routerLink]="'/in/price-manager/' + pricing.pricing_id"
+                        class="text-xs px-4 text-white bg-green-500 rounded-full hover:bg-green-700 hover:cursor-pointer">
+                        {{ pricing.pricing_id }}</div>
+                    </div>
+                    }
+                  </div>
+                  }
+                </div>
+                }
+                }
+              </div>
+
+            </mat-tab>
+
+            <mat-tab label="Histórico">
+
+              <div class="mb-4 p-4 max-h-[300px] overflow-auto">
+                @for (log of entry?.VolumeLog; track $index) {
+                <div class="mb-4 leading-3">
+                  <div>
+                    <span class="text-xs text-gray-400">{{ dateTime.convertToBRTime(log.created_at) }} por {{
+                      log?.User?.Person?.name }}</span>
+                  </div>
+                  <div>
+                    <span class="text-orange-400 text-xl mr-1">•</span>
+                    <span class="text-sm">{{ log?.origin_history}}</span>
+                  </div>
+                  <!-- <div>
+          <span class="text-green-400 text-xl mr-1">•</span>
+          <span class="text-sm">{{ log?.generated_history}}</span>
+        </div> -->
+                </div>
+                }
+              </div>
+
+            </mat-tab>
+          </mat-tab-group>
+        </mat-card>
+      </div>
+      }
+    </div>
+    }
+  </div>
+</ng-template>
+
+<ng-template #exitTemp>
+  <div class="pt-2">
+    @if (isLoading()) {
+    <app-loading />
+    } @else {
+    @if (exitList.length === 0) {
+    <div>
+      <app-zero-length text="Nenhum resultado encontrado" />
+    </div>
+    }
+    <div class="">
+      @for (exit of exitList; track $index) {
+      <div class="border-t-1 border-gray-400 my-4">
+        <mat-card class="py-2 px-4">
+          <div class="p-2">
+            <div class="">
+
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="text-red-600 font-medium">Saída {{ exit.id }}</span>
+                </div>
+              </div>
+
+              <span>
+                @for (item of exit.princingVolumes; track $index) {
+                item
+                }
+              </span>
+
+              <div class="flex gap-2">
+                <span class="text-xs font-medium">Cliente: {{ exit.Person.name }}</span>
+              </div>
+
+              @switch(exit.status) {
+              @case ('closed') {
+              <div class="flex gap-2">
+                <span class="text-gray-500 text-xs">Saída em {{ dateTime.convertToBRTime(exit.exit_at)}}</span>
+              </div>
+              <div class="flex gap-2">
+                <span class="text-gray-500 text-xs">Situação: Encerrado</span>
+              </div>
+              }
+              @case ('ongoing') {
+              <div class="flex gap-2">
+                <span class="text-gray-500 text-xs">Previsão de saída {{ dateTime.convertToBRTime(exit.exit_at)}}</span>
+              </div>
+              <div class="flex gap-2">
+                <span class="text-gray-500 text-xs">Situação: Andamento</span>
+              </div>
+              }
+              }
+              <!-- <span>•</span> -->
+              <div class="flex gap-2">
+                <span class="text-gray-500 text-xs">Tipo de saída
+                  @switch(exit.exit_type) {
+                  @case ('wholesale') {
+                  Atacado
+                  }
+                  @case ('retail') {
+                  Varejo
+                  }
+                  }
+                </span>
+              </div>
+              <div class="flex gap-2">
+                <span class="text-gray-500 text-xs">Criado em {{ dateTime.convertToBRTime(exit.created_at)}}</span>
+              </div>
+              <div class="flex gap-2">
+                <span class="text-gray-500 text-xs">Nota fiscal: {{ exit.invoice ?? '---'}}</span>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="flex flex-wrap py-2 gap-2">
+            @for (item of exit.Volume; track $index) {
+            <div class="mr-2">
+              <div class="hover:cursor-pointer hover:scale-105"
+                [ngClass]="{ 'bg-blue-500/50 rounded-md': pricingVolumesList.includes(item.id) }"
+                (click)="includeToPricing(item.id, exit.status)">
+                <app-card-volume [item]="item" [disableHover]="true" />
+              </div>
+              @if (item.PricingItem?.length > 0) {
+              <div class="border-[1px] border-gray-400 rounded-b-lg px-2 py-1 flex items-center flex-wrap gap-2">
+                <div>
+                  <span class="text-xs text-gray-400">Precificações</span>
+                </div>
+                @for (pricing of item.PricingItem; track $index) {
+                <div>
+                  <div [routerLink]="'/in/price-manager/' + pricing.pricing_id"
+                    class="text-xs px-4 text-white bg-green-500 rounded-full hover:bg-green-700 hover:cursor-pointer">{{
+                    pricing.pricing_id }}</div>
+                </div>
+                }
+              </div>
+              }
+            </div>
+            }
+          </div>
+        </mat-card>
+      </div>
+      }
+    </div>
+    }
+  </div>
+</ng-template>

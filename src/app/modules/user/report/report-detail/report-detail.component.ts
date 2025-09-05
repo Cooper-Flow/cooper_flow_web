@@ -1,9 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { ActivatedRoute } from '@angular/router';
 import { DateTime } from '@app/resources/handlers/datetime';
 import { Regex } from '@app/resources/handlers/regex';
 import { NavigationService } from '@app/services/common/navigation.service';
 import { RegisterService } from '@app/services/user/register.service';
+import { SheetPalletComponent } from '@app/shared/components/sheets/sheet-pallet/sheet-pallet.component';
 
 @Component({
   selector: 'app-report-detail',
@@ -20,7 +22,8 @@ export class ReportDetailComponent implements OnInit {
     private _registerService: RegisterService,
     public regex: Regex,
     private _activeRoute: ActivatedRoute,
-    public dateTime: DateTime
+    public dateTime: DateTime,
+    private _bottomSheet: MatBottomSheet,
   ) { }
 
   ngOnInit(): void {
@@ -40,5 +43,14 @@ export class ReportDetailComponent implements OnInit {
 
   get icon() {
     return this.navigationService.getIcon('register');
+  }
+
+  public openLocationDialog(id: string) {
+    console.log(id)
+    const sheets = this._bottomSheet.open(SheetPalletComponent, {
+      data: {
+        location_id: id
+      }
+    });
   }
 }

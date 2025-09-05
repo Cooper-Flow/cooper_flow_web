@@ -8,17 +8,36 @@
 
 <ng-template #mainTemplate>
   <div class="mb-2 flex items-center justify-between">
-    <div class="mr-4 lg:mb-0 mb-4 flex items-center">
-      <app-title [text]="'S' + exitData.id" icon="local_shipping"></app-title>
+    <div class="mr-4 lg:mb-0 flex items-center">
+      <app-title [text]="'Saída ' + exitData.id" icon="local_shipping"></app-title>
     </div>
 
-    <button mat-button routerLink="/in/track" class="!text-primary flex items-center"
-      matTooltip="Voltar para rastreabilidade">
-      <mat-icon>arrow_back</mat-icon>
-      Voltar</button>
+    <div class="flex items-center gap-1">
+      <button mat-button routerLink="/in/track" class="!text-primary flex items-center"
+        matTooltip="Voltar para rastreabilidade">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar</button>
+
+      <div class="flex justify-center">
+        <button mat-flat-button type="button" (click)="confirm()" class="!bg-green-600">
+          Finalizar saída
+        </button>
+      </div>
+    </div>
   </div>
 
-  <div class="mb-4">
+  <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+    <mat-tab label="Detalhes">
+      <ng-container *ngTemplateOutlet="detailTemp"></ng-container>
+    </mat-tab>
+    <mat-tab [label]="'Volumes de saída (' + (exitData?.Volume?.length ?? '0') + ')'">
+      <ng-container *ngTemplateOutlet="volumesTemp"></ng-container>
+    </mat-tab>
+  </mat-tab-group>
+</ng-template>
+
+<ng-template #detailTemp>
+  <div class="my-4">
     <mat-card appearance="outlined" class="p-3">
 
       <div class="text-sm">
@@ -29,12 +48,12 @@
       <div class="text-sm">
         <span class="font-medium">Tipo de saída: </span>
         @switch (exitData?.exit_type) {
-          @case ('wholesale') {
-            <span>Atacado</span>
-          }
-          @case ('retail') {
-            <span>Varejo</span>
-          }
+        @case ('wholesale') {
+        <span>Atacado</span>
+        }
+        @case ('retail') {
+        <span>Varejo</span>
+        }
         }
       </div>
 
@@ -60,15 +79,6 @@
   </div>
 
   <div>
-    <div class="text-sm">
-      <span class="font-medium">Volumes de saída ({{ exitData?.VolumeExit?.length }})</span>
-    </div>
-    <div class="mb-6">
-      @for (volume of exitData.Volume; track $index) {
-        <app-volume-card-2 [volume]="volume" type="exit"></app-volume-card-2>
-      }
-    </div>
-
     <div class="mb-4">
       <div class="lg:w-[300px] w-full mr-4">
         <span class="text-sm font-medium">Notal fiscal</span>
@@ -85,13 +95,31 @@
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" />
         </div>
       </div>
-      <div class="pt-5">
-        <div class="flex justify-center">
-          <button mat-flat-button type="button" (click)="confirm()" class="!bg-green-600">
-            Finalizar saída
-          </button>
-        </div>
-      </div>
+
     </div>
+  </div>
+</ng-template>
+
+<ng-template #volumesTemp>
+
+  @if (exitData.Volume?.length === 0) {
+  <div class="flex items-center w-full justify-center h-20">
+    <app-zero-length text="Sem volumes separados para esta saída"></app-zero-length>
+  </div>
+  }
+
+  <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-2 p-4">
+    @for (item of exitData.Volume; track $index) {
+    <div [matMenuTriggerFor]="menu" class="transform active:scale-95 transition duration-150">
+      <app-card-volume [item]="item" />
+    </div>
+    <mat-menu #menu="matMenu" xPosition="before">
+      <button mat-menu-item (click)="undo(item.id)"
+        class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+        <mat-icon class="mr-2">pallet</mat-icon>
+        Devolver para palete
+      </button>
+    </mat-menu>
+    }
   </div>
 </ng-template>

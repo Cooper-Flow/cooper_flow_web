@@ -58,6 +58,7 @@ export class TrackEnterComponent implements OnInit {
   ) {
     this.form = this._formBuilder.group({
       field: [''],
+      batch: [''],
       date: [this.dateTime.getDateTime(), [Validators.required]],
       observation: [''],
     })
@@ -215,9 +216,9 @@ export class TrackEnterComponent implements OnInit {
           error = 'Material não definido'
         }
 
-        //Verifica se  cada produto tem localização definido
+        //Verifica se  cada produto tem palete definido
         if ([null, false, '', undefined].includes(volume?.location)) {
-          error = 'Localização do volume não definido'
+          error = 'Palete do volume não definido'
         }
 
         //Verifica se cada produto tem peso válido

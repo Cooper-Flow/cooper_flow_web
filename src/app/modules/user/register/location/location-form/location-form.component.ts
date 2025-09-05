@@ -37,7 +37,7 @@ export class LocationFormComponent {
     this.form = this._formBuilder.group({
       name: ['', [Validators.required]],
       isActive: [true, [Validators.required]],
-      sector_id: [true, [Validators.required]],
+      sector_id: [null],
       description: [''],
     })
   }
@@ -107,8 +107,6 @@ export class LocationFormComponent {
     }
 
     const data = this.form.value;
-
-    data.phone = String(data.phone)
 
     this.isLoading.set(true);
 

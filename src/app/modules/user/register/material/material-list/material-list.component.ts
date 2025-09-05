@@ -1,6 +1,7 @@
 import { LocationService } from './../../../../../services/user/location.service';
 import { Component, signal } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
+import { PermissionEnum } from '@app/enum/permissions.enum';
 import { Regex } from '@app/resources/handlers/regex';
 import { NavigationService } from '@app/services/common/navigation.service';
 import { SnackbarService } from '@app/services/common/snackbar.service';
