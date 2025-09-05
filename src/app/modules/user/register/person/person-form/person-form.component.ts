@@ -22,7 +22,7 @@ export class PersonFormComponent {
   public form_producer: FormGroup;
   public form_customer: FormGroup;
   public user_id = signal('');
-  public profiles = new FormControl('');
+  public profiles = new FormControl([]);
 
   public profileList: Array<any> = [];
 
@@ -73,8 +73,9 @@ export class PersonFormComponent {
       this.isEditing.set(true);
       this.user_id.set(user_id)
       this.detail(user_id);
-      this.getProfiles();
     }
+
+    this.getProfiles();
   }
 
 
