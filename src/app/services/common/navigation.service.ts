@@ -150,7 +150,7 @@ export class NavigationService {
         {
           permission: PermissionEnum.R03,
           page: 'sectors',
-          name: 'Áreas',
+          name: 'Localizações',
           icon: 'pin_drop',
           path: '/in/sectors'
         },
@@ -256,7 +256,7 @@ export class NavigationService {
         },
         {
           code: PermissionEnum.R03,
-          description: 'Pode gerenciar cadastro de áreas',
+          description: 'Pode gerenciar cadastro de localizações',
           selected: false
         },
         {

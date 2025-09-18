@@ -1,5 +1,10 @@
-<div class="border-[1px] border-gray-400 rounded-md  py-2 px-4 min-h-[5rem] w-[20rem] shadow-sm"
-  [ngClass]="{ 'hover:bg-gray-200 hover:scale-105 hover:cursor-pointer' :  !disableHover, 'rounded-b-none ' : item.PricingItem?.length > 0}">
+<div class="border-[1px] border-gray-400 rounded-md  shadow-sm "
+  [ngClass]="{ 'hover:bg-gray-200 hover:scale-105 hover:cursor-pointer' :  !disableHover, 'rounded-b-none ' : item.PricingItem?.length > 0}"
+  [ngClass]="[
+  'px-2',
+  !small ? 'px-4 py-2 min-h-[5rem] w-[20rem]' : ''
+]">
+  @if (!small) {
   <div class="flex items-center">
     <div class="w-10 h-10 mr-2">
       <app-icon icon="box" customClass="" />
@@ -10,6 +15,7 @@
       </div>
     </div>
   </div>
+  }
 
   <div class="my-2">
     <div>
@@ -28,6 +34,7 @@
     </div>
   </div>
 
+  @if (!small) {
   <div class="flex justify-between p-1">
     <span class="text-xs">Entrada {{ item?.entry_id }}</span>
     <span class="text-xs">Lote: {{ item?.Entry?.batch ?? '---' }}</span>
@@ -40,5 +47,6 @@
     <span [class]="dateTime.checkNew(item.created_at) ? 'text-green-500':'text-gray-400'"> {{
       dateTime.convertToBRTime(item.created_at) }} </span>
   </div>
+  }
 
 </div>

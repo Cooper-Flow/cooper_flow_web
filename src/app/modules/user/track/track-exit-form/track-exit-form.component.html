@@ -25,42 +25,45 @@
         <mat-radio-group formControlName="exit_type">
           <mat-radio-button value="wholesale" class="mr-2" color="primary">Atacado</mat-radio-button>
           <mat-radio-button value="retail" color="primary">Varejo</mat-radio-button>
+          <mat-radio-button value="consumer" color="primary">Consumidor</mat-radio-button>
         </mat-radio-group>
       </div>
 
+      @if(this.form.value.exit_type !== 'consumer') {
       <div class="mb-4">
         @if (selectedCustomer()) {
-          <mat-card appearance="outlined" class="p-2">
-            <div class="flex mr-2">
-              <div class="mr-1 pb-1">
-                <mat-icon class="text-gray-600 scale-75">person</mat-icon>
-              </div>
-              <div>
-                <span class="text-sm font-medium">{{ customer.name }}</span>
-              </div>
+        <mat-card appearance="outlined" class="p-2">
+          <div class="flex mr-2">
+            <div class="mr-1 pb-1">
+              <mat-icon class="text-gray-600 scale-75">person</mat-icon>
             </div>
-
             <div>
-              <div class="mr-2">
-                <span class="text-xs">Contato: {{ customer?.phone }}</span>
-              </div>
-              <div class="mr-2">
-                <span class="text-xs">E-mail: {{ customer?.email }}</span>
-              </div>
-              <div class="mr-2">
-                <span class="text-xs">Endereço: {{ customer?.address }}</span>
-              </div>
+              <span class="text-sm font-medium">{{ customer.name }}</span>
             </div>
-          </mat-card>
-          } @else {
-          <div class="mt-4">
-            <button mat-raised-button type="button" (click)="dialogProducer()">
-              <mat-icon>add</mat-icon>
-              Selecionar o cliente
-            </button>
           </div>
-          }
+
+          <div>
+            <div class="mr-2">
+              <span class="text-xs">Contato: {{ customer?.phone }}</span>
+            </div>
+            <div class="mr-2">
+              <span class="text-xs">E-mail: {{ customer?.email }}</span>
+            </div>
+            <div class="mr-2">
+              <span class="text-xs">Endereço: {{ customer?.address }}</span>
+            </div>
+          </div>
+        </mat-card>
+        } @else {
+        <div class="mt-4">
+          <button mat-raised-button type="button" (click)="dialogProducer()">
+            <mat-icon>add</mat-icon>
+            Selecionar o cliente
+          </button>
+        </div>
+        }
       </div>
+      }
 
       <div class="lg:w-[200px] w-full mr-2 mb-4">
         <span class="text-sm font-medium">Previsão de saída</span>

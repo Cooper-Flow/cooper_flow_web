@@ -1,9 +1,8 @@
 <section class="lg:p-4 p-2">
-  @if(loadingPoint() < 4) {
-  <app-loading></app-loading>
-  } @else {
-  <ng-container *ngTemplateOutlet="mainTemplate"></ng-container>
-  }
+  @if(loadingPoint() < 4) { <app-loading></app-loading>
+    } @else {
+    <ng-container *ngTemplateOutlet="mainTemplate"></ng-container>
+    }
 </section>
 
 
@@ -19,6 +18,9 @@
           }
           @case ('exit') {
           <app-title text="Saída de volume" icon="local_shipping"></app-title>
+          }
+          @case ('edit') {
+          <app-title text="Editar volume" icon="edit"></app-title>
           }
           }
         </div>
@@ -63,7 +65,7 @@
 
       <div class="w-full h-[1px] bg-gray-200 my-3"></div>
 
-      <div class="md:grid grid-cols-2 gap-2">
+      <div class="">
 
         <div>
           <mat-card class="p-2 mb-2">
@@ -78,94 +80,89 @@
             </div>
 
             <div class="">
-              <mat-card class="p-2 w-full mb-2" appearance="outlined">
-                <div>
-                  <span class="text-green-400">Disponível</span>
-                </div>
-                <div>
-                  <span class="font-normal mr-1"> {{ regex.formatToTwoDigits(volumeData?.weight) }} kg</span>
-                  <span class="text-gray-400">({{ volumeData.Material.name }})</span>
-                </div>
-              </mat-card>
+
+              <div class="flex gap-2">
+                <mat-card class="p-2 w-full mb-2" appearance="outlined">
+                  <div>
+                    <span class="text-green-400">Disponível</span>
+                  </div>
+                  <div>
+                    <span class="font-normal mr-1"> {{ regex.formatToTwoDigits(volumeData?.weight) }} kg</span>
+                    <span class="text-gray-400">({{ volumeData.Material.name }})</span>
+                  </div>
+                </mat-card>
+
+                <mat-card class="p-2 w-full mb-2" appearance="outlined">
+                  <div class="">
+                    <span class="text-gray-500">Restante</span>
+                  </div>
+                  <div>
+                    <span>{{ remaining}} kg</span>
+                  </div>
+                </mat-card>
+              </div>
 
               <mat-card class="p-2 w-full mb-2" appearance="outlined">
-                <div class="text-sm mb-1">
-                  <span class="text-orange-500">Retirar</span>
-                </div>
-                <div class="flex items-center mb-[8px]">
-                  <button mat-icon-button (click)="addRemove()" class="!bg-orange-400 !text-white">
-                    <mat-icon>add</mat-icon>
-                  </button>
-                  <div class="min-w-[150px]">
-                    <input type="number" [(ngModel)]="removeWeight" [ngModelOptions]="{standalone: true}"
-                    (ngModelChange)="onWeightChange()"
-                      class="mx-1 border border-gray-300 rounded-md px-4 py-2 w-[150px]">
+                <div class="flex items-center mr-2 justify-between">
+                  <div>
+                    <div class=" mb-1">
+                      <span class="text-orange-500">Retirar</span>
+                    </div>
+                    <div class="flex items-center mb-[8px]">
+                      <button mat-icon-button (click)="removeRemove()" [disabled]="limit"
+                        [class]="limit ? '!bg-gray-200':'!bg-orange-400 !text-white'">
+                        <mat-icon>remove</mat-icon>
+                      </button>
+                      <div class="min-w-[150px]">
+                        <input type="number" [(ngModel)]="removeWeight" [ngModelOptions]="{standalone: true}"
+                          (ngModelChange)="onWeightChange()"
+                          class="mx-1 border border-gray-300 rounded-md px-4 py-2 w-[150px]">
+                      </div>
+                      <button mat-icon-button (click)="addRemove()" class="!bg-orange-400 !text-white">
+                        <mat-icon>add</mat-icon>
+                      </button>
+                      <div class="mx-2">
+                        <span>Kg</span>
+                      </div>
+                    </div>
+                    @if (checkRemove) {
+                    <div>
+                      <span class="text-red-500">Valor de retirada superior que o disponível</span>
+                    </div>
+                    }
+                    @if (notAlocate < 0) { <div>
+                      <span class="text-red-500">ATENÇÃO: {{ notAlocate }} kg a mais sendo movimentado</span>
                   </div>
-                  <button mat-icon-button (click)="removeRemove()" [disabled]="limit"
-                    [class]="limit ? '!bg-gray-200':'!bg-orange-400 !text-white'">
-                    <mat-icon>remove</mat-icon>
+                  }
+                </div>
+                <div class="pt-2 flex gap-2">
+                  <button mat-flat-button class="!bg-orange-400" (click)="addAll()">
+                    Tudo
                   </button>
-                  <div class="mx-2">
-                    <span>KG</span>
-                  </div>
-                </div>
-                @if (checkRemove) {
-                <div>
-                  <span class="text-red-500">Valor de retirada superior que o disponível</span>
-                </div>
-                }
-                @if (notAlocate < 0) { <div>
-                  <span class="text-red-500">ATENÇÃO: {{ notAlocate }} kg a mais sendo movimentado</span>
-            </div>
-            }
-          </mat-card>
 
-          <mat-card class="p-2 w-full mb-2" appearance="outlined">
-            <div class="text-sm">
-              <span class="text-gray-500">Restante</span>
+                  <button mat-flat-button class="!bg-orange-400 pt-2" (click)="addHalf()">
+                    Metade
+                  </button>
+                </div>
             </div>
-            <div>
-              <span>{{ remaining}} kg</span>
-            </div>
+
           </mat-card>
         </div>
         </mat-card>
       </div>
-
       <div>
-        <div>
-          <div class="flex justify-center my-4">
-            <button mat-flat-button (click)="addVolume(volumeData)" class="!bg-orange-400 !text-white">
-              <mat-icon>add</mat-icon> Adicionar novo volume
-            </button>
-          </div>
-          <div>
-            <div class="text-center mb-2">
-              @if (volumeList.length > 1) {
-              <span class="text-xs text-gray-500">*Serão criados novos volumes nos paletes selecionados.</span>
-              }
-              @else {
-              <span class="text-xs text-gray-500">*Será criado um novo volume no palete selecionado.</span>
-              }
 
-            </div>
-
-            @if (remaining < 0) { <div class="mb-4 text-center">
-              <span class="text-xs text-red-500">A quatidade retirada não pode ser superior a quantidade
-                disponível.</span>
-          </div>
-          }
-        </div>
 
         <div class="p-2">
           @for (volume of volumeList; track $index) {
           <div class="lg:col-span-1">
-            <div class="pl-1">
+            <div class="pl-1 mb-2">
               <span class="text-sm font-medium">Novo volume {{ $index + 1 }}</span>
             </div>
             <mat-card class="p-3 mb-4 bg-white">
               <div class="text-end">
-                <span (click)="deleteVolume($index)" class="text-xs text-blue-400 hover:underline">Remover</span>
+                <span (click)="deleteVolume($index)"
+                  class="text-xs text-blue-400 hover:underline hover:cursor-pointer">Remover</span>
               </div>
 
               <div class="sm:flex mb-2">
@@ -200,7 +197,7 @@
                   <div class="flex items-center">
                     <input type="number" [(ngModel)]="volume.weight" [ngModelOptions]="{standalone: true}"
                       class="mr-2 rounded-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 lg:min-w-[200px] max-w-[200px] text-sm border-gray-300 p-2.5">
-                    <span>KG</span>
+                    <span>Kg</span>
                   </div>
                 </div>
                 <div class="w-full">
@@ -245,8 +242,33 @@
           </div>
           }
         </div>
+
+        <div>
+          <div class="flex justify-center my-4">
+            <button mat-flat-button (click)="addVolume(volumeData)" class="!bg-orange-400 !text-white">
+              <mat-icon>add</mat-icon> Adicionar novo volume
+            </button>
+          </div>
+          <div>
+            <div class="text-center mb-2">
+              @if (volumeList.length > 1) {
+              <span class="text-xs text-gray-500">*Serão criados novos volumes nos paletes selecionados.</span>
+              }
+              @else {
+              <span class="text-xs text-gray-500">*Será criado um novo volume no palete selecionado.</span>
+              }
+
+            </div>
+
+            @if (remaining < 0) { <div class="mb-4 text-center">
+              <span class="text-xs text-red-500">A quatidade retirada não pode ser superior a quantidade
+                disponível.</span>
+          </div>
+          }
+        </div>
       </div>
     </div>
+  </div>
   </div>
 
   <!-- <div class="flex justify-center mb-4">
@@ -260,6 +282,5 @@
       <mat-icon class="scale-150 !text-gray-600">arrow_downward</mat-icon>
     </div> -->
 
-  </div>
   </div>
 </ng-template>

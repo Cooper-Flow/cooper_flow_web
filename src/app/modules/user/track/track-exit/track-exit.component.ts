@@ -20,9 +20,12 @@ import { DialogConfirmComponent } from '@app/shared/components/dialog-confirm/di
 export class TrackExitComponent implements OnInit {
 
   public isLoading = signal(true);
+  public isLoadingVolumes = signal(true);
   public exitData: any = {};
   public date = '';
   public invoice = '';
+  public locationList: Array<any> = [];
+  public selectedVolumes: Array<string> = [];
 
   constructor(
     public navigationService: NavigationService,
@@ -34,7 +37,8 @@ export class TrackExitComponent implements OnInit {
     public snackService: SnackbarService,
     public router: Router,
     public regex: Regex,
-    private _volumeService: VolumeService
+    private _volumeService: VolumeService,
+    private _locationService: LocationService
   ) { }
 
   ngOnInit(): void {
@@ -43,6 +47,7 @@ export class TrackExitComponent implements OnInit {
 
     this.getExit(exit_id);
     this.date = this.dateTime.getDateTime();
+    this.getTrack()
 
   }
 
@@ -52,6 +57,18 @@ export class TrackExitComponent implements OnInit {
 
   get icon() {
     return this.navigationService.getIcon('register');
+  }
+
+  getSelectedVolumesText() {
+    if(this.selectedVolumes.length === 0) {
+      return 'Nenhum volume selecionado';
+    }
+
+    if(this.selectedVolumes.length === 1) {
+      return '1 volume selecionado';
+    }
+
+    return `${this.selectedVolumes.length} volumes selecionados`
   }
 
   public getExit(id: number) {
@@ -82,6 +99,10 @@ export class TrackExitComponent implements OnInit {
 
   public confirm() {
 
+    const volumes = this.selectedVolumes;
+
+    if(volumes.length === 0) return this.snackService.open('Selecione pelo menos um volume para finalizar e saída')
+
     const dialogRef = this.dialog.open(DialogConfirmComponent);
 
     dialogRef.afterClosed().subscribe(
@@ -91,7 +112,8 @@ export class TrackExitComponent implements OnInit {
           const data = {
             exit_id: this.exitData.id,
             date: new Date(this.date).toISOString(),
-            invoice: this.invoice
+            invoice: this.invoice,
+            volumes: volumes
           }
 
           this._registerService.closeExit(data).subscribe(
@@ -142,6 +164,42 @@ export class TrackExitComponent implements OnInit {
         }
       }
     )
+  }
+
+
+  public getTrack() {
+    this.isLoadingVolumes.set(true);
+
+    const params = {
+      sector_id: '',
+      filter: ''
+    }
+
+    this._locationService.track(params).subscribe(
+      data => {
+        this.locationList = data.map((location: any) => {
+          return {
+            ...location,
+            Volume: location.Volume?.map((vol: any) => ({
+              ...vol,
+              selected: true
+            })) || []
+          }
+        });
+        this.isLoading.set(false);
+      }
+    )
+  }
+
+  public includeVolume(volume_id: string) {
+
+    const index = this.selectedVolumes.indexOf(volume_id);
+
+    if (index > -1) {
+      this.selectedVolumes.splice(index, 1);
+    } else {
+      this.selectedVolumes.push(volume_id);
+    }
   }
 
 }

@@ -20,58 +20,63 @@
 
   <div class="mb-4">
     @if (exitList.length > 0) {
-      @for (item of exitList; track $index) {
-        <mat-card appearance="outlined" class="p-3 mb-4">
-          <div class="flex justify-between items-center">
-            <div>
-              <span class="text-red-500 text-lg font-medium mr-2">S{{ item.id }}</span>
-              <span class="text-lg">{{ item?.Person?.name }}</span>
-            </div>
+    @for (item of exitList; track $index) {
+    <mat-card appearance="outlined" class="p-3 mb-4">
+      <div class="flex justify-between items-center">
+        <div>
+          <span class="text-red-500 text-lg font-medium mr-2">S{{ item.id }}</span>
+          <span class="text-lg">{{ item?.Person?.name }}</span>
+        </div>
 
-            <div>
-              <button mat-icon-button [routerLink]="'/in/track/exit/detail/' + item.id" matTooltip="Detalhar registro">
-                <mat-icon class="text-gray-500">open_in_new</mat-icon>
-              </button>
-            </div>
-          </div>
+        <div>
+          <button mat-icon-button [routerLink]="'/in/track/exit/detail/' + item.id" matTooltip="Detalhar registro">
+            <mat-icon class="text-gray-500">open_in_new</mat-icon>
+          </button>
+        </div>
+      </div>
 
-          <div class="text-sm">
-            <span class="font-medium">Tipo de saída: </span>
-            @switch (item?.exit_type) {
-              @case ('wholesale') {
-                <span>Atacado</span>
-              }
-              @case ('retail') {
-                <span>Varejo</span>
-              }
-            }
-          </div>
+      <div class="text-sm">
+        <span class="font-medium">Tipo de saída: </span>
+        @switch (item?.exit_type) {
+        @case ('wholesale') {
+        <span>Atacado</span>
+        }
+        @case ('retail') {
+        <span>Varejo</span>
+        }
+        @case ('consumer') {
+        <span>Consumidor</span>
+        }
+        }
+      </div>
 
-          <div class="text-sm">
-            <span class="font-medium">Responsável: </span>
-            <span>{{ item?.User?.Person?.name }}</span>
-          </div>
+      <div class="text-sm">
+        <span class="font-medium">Responsável: </span>
+        <span>{{ item?.User?.Person?.name }}</span>
+      </div>
 
-          <div class="text-sm">
-            <span class="font-medium">Previsão de saída: </span>
-            <span>{{ dateTime.convertToBRTime(item.exit_at) }}</span>
-          </div>
+      <div class="text-sm">
+        <span class="font-medium">Previsão de saída: </span>
+        <span>{{ dateTime.convertToBRTime(item.exit_at) }}</span>
+      </div>
 
-          <div class="text-sm">
-            <span class="font-medium">Observação: </span>
-            <span>{{ item.observation }}</span>
-          </div>
+      <div class="text-sm">
+        <span class="font-medium">Observação </span>
+        <div>
+          <span>{{ item.observation }}</span>
+        </div>
+      </div>
 
-          <div class="text-end">
-            <span class="text-sm text-gray-400">{{ dateTime.convertToBRTime(item.created_at) }}</span>
-          </div>
-        </mat-card>
-      }
+      <div class="text-end">
+        <span class="text-sm text-gray-400">{{ dateTime.convertToBRTime(item.created_at) }}</span>
+      </div>
+    </mat-card>
+    }
     }
     @else {
-      <div class="flex justify-center items-center min-h-[200px]">
-        <app-zero-length text="Sem saídas em andamento no momento"></app-zero-length>
-      </div>
+    <div class="flex justify-center items-center min-h-[200px]">
+      <app-zero-length text="Sem saídas em andamento no momento"></app-zero-length>
+    </div>
     }
   </div>
 

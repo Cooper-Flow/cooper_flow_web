@@ -56,8 +56,11 @@ export class TrackTransformComponent implements OnInit {
 
     const template = this.activeRoute.snapshot.queryParams['template'];
 
-    if (template === 'exit') {
+    if (template) {
       this.template.set(template)
+    }
+    else {
+      this.template.set('movimentation')
     }
 
 
@@ -350,5 +353,18 @@ export class TrackTransformComponent implements OnInit {
       })
     }
   }
+
+  public addAll() {
+    this.removeWeight = this.volumeData?.weight
+  }
+
+  public addHalf() {
+    if (this.volumeData?.weight) {
+      this.removeWeight = Math.floor(this.volumeData.weight / 2);
+    }
+  }
+
+
+
 }
 

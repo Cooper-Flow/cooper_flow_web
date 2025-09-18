@@ -57,14 +57,22 @@ export class PriceManagerDetailComponent implements OnInit {
 
   get totalPrice() {
     let total = 0;
+
     this.pricingData.PricingItem?.forEach((p: any) => {
-      total += p.price || 0;
+      const weight = Number(p?.Volume?.weight) || 0;
+      const price = Number(p?.price) || 0;
+      total += weight * price;
     });
 
     this.additionalList?.forEach((p: any) => {
+      const value = Number(p?.price) || 0;
       switch (p.type) {
-        case 'add': total += p.price || 0; break;
-        case 'remove': total -= p.price || 0; break;
+        case 'add':
+          total += value;
+          break;
+        case 'remove':
+          total -= value;
+          break;
       }
     });
 
@@ -74,9 +82,18 @@ export class PriceManagerDetailComponent implements OnInit {
     });
   }
 
+
   get canEdit() {
     return this.pricingData.canEdit ?? false;
   }
+
+  get getTotalWeight() {
+    return this.pricingData?.PricingItem?.reduce(
+      (total: number, p: any) => total + (p?.Volume?.weight || 0),
+      0
+    ) ?? 0;
+  }
+
 
 
   public getDetail(id: number) {
@@ -107,7 +124,7 @@ export class PriceManagerDetailComponent implements OnInit {
   }
 
   onPriceInput(event: any, item: any) {
-    const digits = event.target.value.replace(/\D/g, ''); // pega só os números
+    const digits = event.target.value.replace(/\D/g, '');
     const numericValue = parseInt(digits || '0', 10);
 
     item.price = numericValue / 100;
@@ -174,9 +191,20 @@ export class PriceManagerDetailComponent implements OnInit {
       },
       excp => {
         this.sendingObs.set(false)
-        this.snackService.open('Houve um erro enviar observação')
+        this.snackService.open('Houve um erro ao enviar observação')
       }
     )
   }
 
+
+  public getSubTotal(item: any): string {
+    if (!item || !item.Volume) return 'R$ 0,00';
+
+    const weight = item.Volume.weight ?? 0;
+    const price = item.price ?? 0;
+
+    const subtotal = weight * price;
+
+    return `R$ ${this.formatPrice(subtotal)}`;
+  }
 }

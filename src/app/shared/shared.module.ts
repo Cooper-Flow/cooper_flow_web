@@ -24,6 +24,7 @@ import { DialogConfirmComponent } from './components/dialog-confirm/dialog-confi
 import { IconComponent } from './components/icon/icon.component';
 import { SheetPalletComponent } from './components/sheets/sheet-pallet/sheet-pallet.component';
 import { CardVolumeComponent } from './components/cards/card-volume/card-volume.component';
+import { SheetChangeSectorComponent } from './components/sheets/sheet-change-location/sheet-change-sector';
 
 const config: ExtraOptions = {
   useHash: false,
@@ -53,7 +54,8 @@ const config: ExtraOptions = {
     DialogConfirmComponent,
     IconComponent,
     SheetPalletComponent,
-    CardVolumeComponent
+    CardVolumeComponent,
+    SheetChangeSectorComponent
   ],
   imports: [
     CommonModule,
@@ -86,7 +88,8 @@ const config: ExtraOptions = {
     IconComponent,
     SheetPalletComponent,
     DialogTransformComponent,
-    CardVolumeComponent
+    CardVolumeComponent,
+    SheetChangeSectorComponent
   ],
 })
 export class SharedModule { }

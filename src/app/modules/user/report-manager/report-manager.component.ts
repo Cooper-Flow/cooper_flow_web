@@ -90,7 +90,10 @@ export class ReportManagerComponent {
 
     this._pricingService.getVoluesByProducer(params).subscribe(
       response => {
-        this.reportList = response.enters ?? [];
+        this.reportList = (response.enters ?? []).map((item: any) => ({
+          ...item,
+          compare: false
+        }));
         this.exitList = response.exits ?? [];
         this.isLoading.set(false);
       },
@@ -106,7 +109,7 @@ export class ReportManagerComponent {
     const data = {
       volumes: this.pricingVolumesList
     }
-    const dialogRef = this.dialog.open(DialogConfirmComponent, { data: `Criar precificação para ${this.pricingVolumesList.length} ${this.pricingVolumesList.length > 1 ? 'volumes' : 'volume'}?`});
+    const dialogRef = this.dialog.open(DialogConfirmComponent, { data: `Criar precificação para ${this.pricingVolumesList.length} ${this.pricingVolumesList.length > 1 ? 'volumes' : 'volume'}?` });
 
     dialogRef.afterClosed().subscribe(
       result => {
@@ -147,4 +150,18 @@ export class ReportManagerComponent {
       }
     }
   }
+
+  public getTotal(volumes: any[], exited?: boolean): string {
+    if (!volumes) return '---';
+
+    const total = volumes
+      .filter(v => (exited === null ? v?.exited == null : v?.exited === exited))
+      .reduce((sum, v) => {
+        const weight = Number(v?.weight) || 0;
+        return sum + weight;
+      }, 0);
+
+    return `${total} Kg`;
+  }
+
 }

@@ -70,7 +70,10 @@
                 Quantidade
               </th>
               <th scope="col" class="px-6 py-3">
-
+                Valor do Kg
+              </th>
+              <th scope="col" class="px-6 py-3">
+                Subtotal
               </th>
             </tr>
           </thead>
@@ -107,26 +110,37 @@
                 </div>
               </td>
               <td class="px-6 py-1  text-xs font-medium">
-                <span class="font-medium text-black">{{ item?.Volume?.weight }} KG </span>
+                <span class="font-medium text-black">{{ item?.Volume?.weight }} Kg </span>
                 <span>({{ item?.Volume?.Material?.name }})</span>
               </td>
-              <td class="px-6 py-1 text-xs flex items-center justify-end">
+              <td class="px-6 py-1 text-xs">
                 @if (canEdit) {
-                <div class="flex items-center max-w-[200px]">
+                <div class="flex items-center max-w-[200px] justify-start">
                   <span matTextPrefix>R$&nbsp;</span>
                   <input matInput type="text" [value]="formatPrice(item.price)" (input)="onPriceInput($event, item)"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     placeholder="0,00" />
                 </div>
                 } @else {
-                <div>
-                  <span>R$ {{formatPrice(item.price)}}</span>
-                </div>
+                <span>R$ {{formatPrice(item.price)}}</span>
                 }
               </td>
-
+              <td class="px-6 py-1  text-xs font-medium">
+                {{ getSubTotal(item) }}
+              </td>
             </tr>
             }
+            <tr>
+              <th scope="col" class="px-1 py-3"></th>
+              <th scope="col" class="px-6 py-3"></th>
+              <th scope="col" class="px-6 py-3"></th>
+              <th scope="col" class="px-6 py-3"></th>
+              <th scope="col" class="px-6 py-3"></th>
+              <th scope="col" class="px-6 py-3 text-xs font-medium text-black">
+                Total: {{ getTotalWeight }} Kg
+              </th>
+              <th scope="col" class="px-6 py-3"></th>
+            </tr>
           </tbody>
         </table>
 
@@ -170,7 +184,7 @@
                     <option value="remove">Desconto</option>
                   </select>
                   } @else {
-                  <div class="text-gray-400 text-xs">
+                  <div class="text-gray-600 text-xs">
                     @switch (value.type) {
                     @case ('add') {
                     <span>Adicional</span>
@@ -220,36 +234,39 @@
 
     <div>
       @if(!canEdit) {
-        <div class="rounded-lg shadow-md">
-          @for (obs of observationlList; track $index) {
-            <div class="rounded-lg border-l-2 border-orange-400 mb-2 p-4">
-              <div class="flex items-center gap-2 mb-4">
-                <mat-icon class="text-gray-700">person</mat-icon>
-                <div class="mr-2">
-                  <span class="text-gray-700 font-medium text-sm">{{ obs?.User?.Person?.name }}</span>
-                </div>
-                <div>
-                  <span class="text-gray-700 text-xs">{{ dateTime.convertToBRTime(obs?.created_at) }}</span>
-                </div>
-              </div>
-              <div class="text-sm">
-                <span>{{ obs.description }}</span>
-              </div>
+      <div class="rounded-lg shadow-md">
+        @for (obs of observationlList; track $index) {
+        <div class="rounded-r-lg border-l-2 border-orange-400 py-4 px-4 shadow-sm mb-4">
+          <div class="flex items-center gap-2 mb-1">
+            <mat-icon class="text-gray-700">person</mat-icon>
+            <div class="mr-2">
+              <span class="text-gray-700 font-medium text-sm">{{ obs?.User?.Person?.name }}</span>
             </div>
-          }
-        </div>
-        <div>
-          <textarea  [disabled]="sendingObs()" [(ngModel)]="observation" [ngModelOptions]="{standalone: true}" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Escrever observação ..."></textarea>
-          <div class="flex justify-end py-2">
-            <button mat-stroked-button matTooltip="Enviar observação" (click)="sendObservation()" [disabled]="sendingObs()">
-              @if (sendingObs()) {
-                Enviando ...
-              } @else {
-                Enviar
-              }
-            </button>
+            <div>
+              <span class="text-gray-700 text-xs">{{ dateTime.convertToBRTime(obs?.created_at) }}</span>
+            </div>
+          </div>
+          <div class="text-sm">
+            <span>{{ obs.description }}</span>
           </div>
         </div>
+        }
+      </div>
+      <div>
+        <textarea [disabled]="sendingObs()" [(ngModel)]="observation" [ngModelOptions]="{standalone: true}" rows="4"
+          class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Escrever observação ..."></textarea>
+        <div class="flex justify-end py-2">
+          <button mat-stroked-button matTooltip="Enviar observação" (click)="sendObservation()"
+            [disabled]="sendingObs()">
+            @if (sendingObs()) {
+            Enviando ...
+            } @else {
+            Enviar
+            }
+          </button>
+        </div>
+      </div>
       }
     </div>
   </div>

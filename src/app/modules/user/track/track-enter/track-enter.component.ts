@@ -175,7 +175,7 @@ export class TrackEnterComponent implements OnInit {
 
   public getTotalVolume(volume: volumeProps) {
     try {
-      const total = `${volume.amount} x ${volume.material?.volume ? volume.material?.volume : '0'} kg = ${volume.amount * volume.material?.volume} KG`
+      const total = `${volume.amount} x ${volume.material?.volume ? volume.material?.volume : '0'} kg = ${volume.amount * volume.material?.volume} Kg`
       return total
     }
     catch (error) {

@@ -26,11 +26,15 @@
     </div>
   </div>
 
+  <div class="text-end text-sm">
+    <span>{{ getSelectedVolumesText() }}</span>
+  </div>
+
   <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
     <mat-tab label="Detalhes">
       <ng-container *ngTemplateOutlet="detailTemp"></ng-container>
     </mat-tab>
-    <mat-tab [label]="'Volumes de saída (' + (exitData?.Volume?.length ?? '0') + ')'">
+    <mat-tab [label]="'Volumes para saída'">
       <ng-container *ngTemplateOutlet="volumesTemp"></ng-container>
     </mat-tab>
   </mat-tab-group>
@@ -53,6 +57,9 @@
         }
         @case ('retail') {
         <span>Varejo</span>
+        }
+        @case ('consumer') {
+        <span>Consumidor</span>
         }
         }
       </div>
@@ -102,24 +109,31 @@
 
 <ng-template #volumesTemp>
 
-  @if (exitData.Volume?.length === 0) {
+  @if (locationList.length === 0) {
   <div class="flex items-center w-full justify-center h-20">
-    <app-zero-length text="Sem volumes separados para esta saída"></app-zero-length>
+    <app-zero-length text="Sem volumes disponíveis"></app-zero-length>
   </div>
   }
 
-  <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-2 p-4">
-    @for (item of exitData.Volume; track $index) {
-    <div [matMenuTriggerFor]="menu" class="transform active:scale-95 transition duration-150">
-      <app-card-volume [item]="item" />
+  <div class="">
+    @for (item of locationList; track $index) {
+    @if (item.Volume?.length > 0) {
+    <div class="p-4">
+      <div class="flex items-center">
+        <app-icon icon="palette" customClass="w-10 h-10 mr-4"></app-icon>
+        <span class="font-medium">{{ item.name }}</span>
+      </div>
+      <div class="flex flex-wrap py-2 gap-2">
+        @for (volume of item.Volume; track $index) {
+        <div class="hover:cursor-pointer hover:scale-105"
+          [ngClass]="{ 'bg-blue-500/50 rounded-md': selectedVolumes.includes(volume.id) }"
+          (click)="includeVolume(volume.id)">
+          <app-card-volume [item]="volume" [disableHover]="true" />
+        </div>
+        }
+      </div>
     </div>
-    <mat-menu #menu="matMenu" xPosition="before">
-      <button mat-menu-item (click)="undo(item.id)"
-        class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
-        <mat-icon class="mr-2">pallet</mat-icon>
-        Devolver para palete
-      </button>
-    </mat-menu>
+    }
     }
   </div>
 </ng-template>

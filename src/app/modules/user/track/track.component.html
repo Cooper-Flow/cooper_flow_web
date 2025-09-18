@@ -1,9 +1,5 @@
 <section class="lg:p-4 p-2">
-  @if(isLoading()) {
-  <app-loading></app-loading>
-  } @else {
   <ng-container *ngTemplateOutlet="mainTemplate"></ng-container>
-  }
 </section>
 
 <ng-template #mainTemplate>
@@ -40,9 +36,9 @@
 <ng-template #locationsTemp>
   <div class="sm:px-4 p-1">
 
-    <div class="mb-1 mt-2">
-      <div class="lg:w-[150px] w-full mr-2">
-        <label class="block mb-1 text-sm font-medium text-gray-900">Área</label>
+    <div class="mb-1 mt-2 lg:flex gap-1">
+      <div class="lg:w-[175px] w-full mr-2 mb-2">
+        <label class="block mb-1 text-sm font-medium text-gray-900">Localização</label>
         <select [(ngModel)]="sector_id" [ngModelOptions]="{standalone: true}" (ngModelChange)="getTrack()"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
           <option value="">Todas</option>
@@ -51,22 +47,34 @@
           }
         </select>
       </div>
+
+      <div class="mb-2 lg:w-[200px]">
+        <label class="block mb-1 text-sm font-medium text-gray-900">Palete</label>
+        <input type="text" [(ngModel)]="filter" [ngModelOptions]="{standalone: true}"
+          (ngModelChange)="onFilterChange($event)"
+          class="rounded-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 w-full text-sm border-gray-300 p-2.5 ">
+      </div>
     </div>
 
     <div class="lg:text-start lg:py-3 text-center mb-2">
       <span class="text-sm text-gray-400">Atualizado em: {{ dateTime.convertToBRTime(currentDate) }}</span>
     </div>
 
+    @if(isLoading()) {
+    <app-loading></app-loading>
+    } @else {
     <div>
       @for (location of locationList; track $index) {
-      <div class="flex justify-between items-center w-full border-[1px] border-gray-500 rounded-md py-2 px-4 mb-2">
+      <div class="flex justify-between items-center w-full border-[1px] border-gray-500 rounded-md py-3.5 px-4 mb-2">
         <div class="flex">
           <div>
             <app-icon icon="palette" customClass="w-10 h-10 mr-4"></app-icon>
           </div>
           <div class="text-sm">
             <div>
-              <span class="mr-2 font-medium">{{ location.name }}</span>
+              <span class="font-medium">{{ location.name }}</span>
+              <span class="mx-2 text-gray-600">•</span>
+              <span class="text-gray-600 font-medium">{{ location?.Sector?.name }}</span>
             </div>
             <div class="flex items-center">
               @if (checkNew(location)) {
@@ -79,12 +87,16 @@
         </div>
 
         <div class="flex justify-center">
-          <button mat-icon-button (click)="openLocationDialog(location.id)" class="">
+          <button mat-icon-button (click)="openChangeSector(location.id)" class="" matTooltip="Mudar de localização">
+            <mat-icon>move_up</mat-icon>
+          </button>
+          <button mat-icon-button (click)="openLocationDialog(location.id)" class="" matTooltip="Ver volumes">
             <mat-icon>pallet</mat-icon>
           </button>
         </div>
       </div>
       }
     </div>
+    }
   </div>
 </ng-template>

@@ -1,0 +1,62 @@
+@if (isLoading()) {
+<div>
+  <app-loading></app-loading>
+</div>
+}
+@else {
+<ng-container *ngTemplateOutlet="mainTemplate"></ng-container>
+}
+
+<ng-template #mainTemplate>
+  <div class="pt-4 pl-4">
+    <div>
+      <div class="flex items-center mb-4">
+        <div class="w-10 h-10 mr-2">
+          <app-icon icon="palette"></app-icon>
+        </div>
+        <div>
+          <div class="flex items-center">
+            <div class="mr-2">
+              <span class="font-medium">{{ palletData.name }}</span>
+            </div>
+          </div>
+          <div>
+            <span class="text-sm text-gray-600 text-normal">{{ palletData?.Volume?.length + ' ' +
+              (palletData?.Volume?.length > 1 ? 'volumes' : 'volume') }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="flex items-center gap-1 rounded-lg border-[1px] border-gray-400 p-4">
+        <span class="text-sm">Localização atual:</span>
+        @if (palletData.Sector) {
+        <div class="bg-gray-500 rounded-full px-2 font-medium text-white">
+          <span class="text-xs">{{ palletData.Sector.name }}</span>
+        </div>
+        }
+      </div>
+      <div class="flex justify-center py-4">
+        <mat-icon>arrow_downward</mat-icon>
+      </div>
+      <div class="rounded-lg border-[1px] border-gray-400 p-4 w-full">
+        <div class="w-full mr-2 mb-2 ">
+          <label class="block mb-1 text-sm font-medium text-gray-900">Nova localização</label>
+          <select [(ngModel)]="sector_id" [ngModelOptions]="{standalone: true}"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+            <option value="">Todas</option>
+            @for (sector of sectorList; track $index) {
+            <option [ngValue]="sector.id">{{ sector.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div (click)="saveChange()" class="flex justify-center py-4">
+        <button mat-flat-button>
+          Salvar
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

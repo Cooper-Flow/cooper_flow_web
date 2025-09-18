@@ -13,7 +13,7 @@ export const PermissionEnum = {
 
   R01: 'R01', // Pode gerenciar cadastro de pessoas
   R02: 'R02', // Pode gerenciar cadastro de produtos
-  R03: 'R03', // Pode gerenciar cadastro de áreas
+  R03: 'R03', // Pode gerenciar cadastro de localizações
   R04: 'R04', // Pode gerenciar cadastro de paletes
   R05: 'R05', // Pode gerenciar cadastro de materiais
 

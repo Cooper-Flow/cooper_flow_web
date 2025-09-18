@@ -8,7 +8,9 @@ import { ImagesService } from '@app/services/common/images.service';
 import { NavigationService } from '@app/services/common/navigation.service';
 import { LocationService } from '@app/services/user/location.service';
 import { SectorService } from '@app/services/user/sector.service';
+import { SheetChangeSectorComponent } from '@app/shared/components/sheets/sheet-change-location/sheet-change-sector';
 import { SheetPalletComponent } from '@app/shared/components/sheets/sheet-pallet/sheet-pallet.component';
+import { debounceTime, Subject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-track',
@@ -22,7 +24,11 @@ export class TrackComponent {
   public locationList: Array<any> = [];
   public sectorList: Array<any> = [];
   public sector_id = "";
+  public filter = "";
   public currentDate = new Date();
+
+  private filterSubject = new Subject<string>();
+  private subscription!: Subscription;
 
   constructor(
     public navigationService: NavigationService,
@@ -39,6 +45,13 @@ export class TrackComponent {
   ngOnInit(): void {
     this.getSectors();
     this.getTrack();
+
+    this.subscription = this.filterSubject
+      .pipe(debounceTime(500))
+      .subscribe(value => {
+        this.filter = value;
+        this.getTrack();
+      });
   }
 
   get title() {
@@ -70,7 +83,8 @@ export class TrackComponent {
     this.isLoading.set(true);
 
     const params = {
-      sector_id: this.sector_id
+      sector_id: this.sector_id,
+      filter: this.filter
     }
 
     this._locationService.track(params).subscribe(
@@ -79,6 +93,10 @@ export class TrackComponent {
         this.isLoading.set(false);
       }
     )
+  }
+
+  public onFilterChange(value: string) {
+    this.filterSubject.next(value);
   }
 
   public detailLocation(id: string) {
@@ -94,7 +112,20 @@ export class TrackComponent {
 
     sheets.afterDismissed().subscribe(
       response => {
-        console.log('asdad')
+        this.getTrack()
+      }
+    )
+  }
+
+  public openChangeSector(id: string) {
+    const sheets = this._bottomSheet.open(SheetChangeSectorComponent, {
+      data: {
+        location_id: id
+      }
+    });
+
+    sheets.afterDismissed().subscribe(
+      response => {
         this.getTrack()
       }
     )
@@ -102,17 +133,17 @@ export class TrackComponent {
 
   public checkNew(location: any) {
 
-    try{
+    try {
       let isNew = false;
       const volumes = location?.Volume;
       volumes?.map((v: any) => {
-        if(this.dateTime.checkNew(v.created_at)){
+        if (this.dateTime.checkNew(v.created_at)) {
           isNew = true;
         }
       })
       return isNew
     }
-    catch(err){
+    catch (err) {
       return false
     }
   }

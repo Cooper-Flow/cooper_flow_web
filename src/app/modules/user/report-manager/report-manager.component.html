@@ -21,7 +21,7 @@
       </div>
 
       <div class="">
-        <div class="lg:w-[300px] w-full mr-4">
+        <div class="w-[300px] mr-4">
           <input type="text" id="field" placeholder="Filtrar por lote" [(ngModel)]="batch"
             [ngModelOptions]="{standalone: true}" (ngModelChange)="setFilter()"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" />
@@ -124,7 +124,7 @@
       @for (entry of reportList; track $index) {
       <div class="border-t-1 border-gray-400 my-4">
         <mat-card class="py-2 px-4">
-          <div class="p-2">
+          <div class="p-2 flex items-center justify-between mb-2">
             <div class="">
               <div>
                 <span class="text-green-600 font-medium">Entrada {{ entry.id }}</span>
@@ -138,8 +138,88 @@
                 <span class="text-gray-500 text-xs"> {{ dateTime.convertToBRTime(entry.created_at)}}</span>
               </div>
             </div>
+
+            <label class="inline-flex items-center cursor-pointer">
+              <input type="checkbox" class="sr-only peer" [(ngModel)]="entry.compare"
+                [ngModelOptions]="{standalone: true}">
+              <div
+                class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600">
+              </div>
+              <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                Comparar
+              </span>
+            </label>
           </div>
 
+          @if (entry.compare) {
+          <div>
+            <div class="grid grid-cols-3 gap-2">
+
+              <div class="border-r-[1px] border-gray-300">
+                <div>
+                  <span class="font-medium text-sm">Entrada</span>
+                </div>
+                <div>
+                  @for (item of entry.VolumeEnter; track $index) {
+                  <div class="mr-2">
+                    <div>
+                      <span class="text-gray-600 text-xs">Localização inicial: {{ item?.Location?.name ?? '' }}</span>
+                    </div>
+                    <app-card-volume [item]="item" [disableHover]="true" [small]="true" />
+                  </div>
+                  }
+                  <div class="py-1 text-center pr-2">
+                    <span class="text-xs">Total: {{ getTotal(entry.VolumeEnter) }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="border-r-[1px] border-gray-300">
+                <div>
+                  <span class="font-medium text-sm">Em processamento</span>
+                </div>
+                <div>
+                  @for (item of entry.Volume; track $index) {
+                  @if (!item.exited) {
+                  <div class="mr-2">
+                    <div>
+                      <span class="text-gray-600 text-xs">Localização atual: {{ item?.Location?.name ?? '' }}</span>
+                    </div>
+                    <app-card-volume [item]="item" [disableHover]="true" [small]="true" />
+                  </div>
+                  }
+                  }
+                  <div class="py-1 text-center pr-2">
+                    <span class="text-xs">Total: {{ getTotal(entry.Volume, false) }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="border-r-[1px] border-gray-300">
+                <div>
+                  <span class="font-medium text-sm">Saída</span>
+                </div>
+                <div>
+                  @for (item of entry.Volume; track $index) {
+                  @if (item.exited) {
+                  <div class="mr-2">
+                    <div>
+                      <span class="text-gray-600 text-xs">Incluso na saída: {{ item.Exit.id ?? '' }}</span>
+                    </div>
+                    <app-card-volume [item]="item" [disableHover]="true" [small]="true" />
+                  </div>
+                  }
+                  }
+                  <div class="py-1 text-center pr-2">
+                    <span class="text-xs">Total: {{ getTotal(entry.Volume, true) }}</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          }
+          @else {
           <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
             <mat-tab label="Entrada">
 
@@ -229,16 +309,13 @@
                     <span class="text-orange-400 text-xl mr-1">•</span>
                     <span class="text-sm">{{ log?.origin_history}}</span>
                   </div>
-                  <!-- <div>
-          <span class="text-green-400 text-xl mr-1">•</span>
-          <span class="text-sm">{{ log?.generated_history}}</span>
-        </div> -->
                 </div>
                 }
               </div>
 
             </mat-tab>
           </mat-tab-group>
+          }
         </mat-card>
       </div>
       }
@@ -277,7 +354,7 @@
               </span>
 
               <div class="flex gap-2">
-                <span class="text-xs font-medium">Cliente: {{ exit.Person.name }}</span>
+                <span class="text-xs font-medium">Cliente: {{ exit.Person?.name }}</span>
               </div>
 
               @switch(exit.status) {
@@ -307,6 +384,9 @@
                   }
                   @case ('retail') {
                   Varejo
+                  }
+                  @case ('consumer') {
+                  Consumidor
                   }
                   }
                 </span>

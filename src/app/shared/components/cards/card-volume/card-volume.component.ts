@@ -11,6 +11,7 @@ export class CardVolumeComponent {
 
   @Input() item: any
   @Input() disableHover?: boolean = false
+  @Input() small?: boolean = false
 
   constructor(
     public regex: Regex,

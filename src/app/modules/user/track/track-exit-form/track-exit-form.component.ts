@@ -76,7 +76,7 @@ export class TrackExitFormComponent {
     }
     const data = this.form.value;
 
-    if (this.selectedCustomer() === false) {
+    if (this.selectedCustomer() === false && this.form.value.exit_type !== 'consumer') {
       this.snackService.open('Selecione o produtor')
       return
     }
@@ -91,7 +91,7 @@ export class TrackExitFormComponent {
       response => {
         this.snackService.open(response.message);
         this.navigationService.getExits();
-        this.router.navigate(['/track/exit/list'])
+        this.router.navigate(['/in/track/exit/list'])
       },
       excp => {
         this.snackService.open(excp.error.message);

@@ -36,4 +36,8 @@ export class LocationService {
   public track(params: any): Observable<any> {
     return this.http.get(`location/track`, { params });
   }
+
+  public changeSector(data: any): Observable<any> {
+    return this.http.post(`location/change-sector`, data);
+  }
 }
