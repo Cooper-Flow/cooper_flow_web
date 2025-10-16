@@ -25,14 +25,16 @@ export class SidebarComponent {
   }
 
   public checkNavigationCategory(item: any): boolean {
+    if (this.navigationService.fullAccess()) return true
     const childs = item.child;
     const permissions = this.navigationService.permissions;
-
     return childs.some((c: any) => permissions.includes(c.permission));
   }
 
 
   public checkNavigationItem(item: any) {
+    if (this.navigationService.fullAccess()) return true
+
     const permissions = this.navigationService.permissions;
 
     if (permissions.includes(item.permission)) {

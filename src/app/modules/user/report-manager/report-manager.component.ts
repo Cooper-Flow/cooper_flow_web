@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { DateTime } from '@app/resources/handlers/datetime';
 import { Regex } from '@app/resources/handlers/regex';
@@ -26,6 +27,11 @@ export class ReportManagerComponent {
   public reportList: Array<any> = [];
   public exitList: Array<any> = [];
   public pricingVolumesList: Array<string> = [];
+
+  public total: number = 0;
+  public page_size: number = 10;
+  public page_index: number = 0;
+  public order: string = 'desc';
 
   constructor(
     public navigationService: NavigationService,
@@ -85,7 +91,10 @@ export class ReportManagerComponent {
     const params = {
       producer_id: producer_id,
       batch: this.batch,
-      filter: this.filter
+      filter: this.filter,
+      page: this.page_index + 1,
+      pageSize: this.page_size,
+      order: this.order
     }
 
     this._pricingService.getVoluesByProducer(params).subscribe(
@@ -95,6 +104,7 @@ export class ReportManagerComponent {
           compare: false
         }));
         this.exitList = response.exits ?? [];
+        this.total = response?.total;
         this.isLoading.set(false);
       },
       excp => {
@@ -164,4 +174,12 @@ export class ReportManagerComponent {
     return `${total} Kg`;
   }
 
+
+  public pageEvent(event: PageEvent) {
+    this.page_size = event.length;
+    this.page_index = event.pageIndex;
+    this.page_size = event.pageSize;
+
+    this.getData(this.producer)
+  }
 }
