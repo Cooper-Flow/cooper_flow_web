@@ -28,6 +28,7 @@ export class NavigationService {
   public isOpen = signal(false);
   public hasExits = signal(0);
   public permissions: Array<string> = [];
+  public fullAccess = signal(false);
 
   constructor(
     private _registerService: RegisterService,
