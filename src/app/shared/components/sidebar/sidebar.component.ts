@@ -36,7 +36,6 @@ export class SidebarComponent {
     if (this.navigationService.fullAccess()) return true
 
     const permissions = this.navigationService.permissions;
-
     if (permissions.includes(item.permission)) {
       return true
     } else {

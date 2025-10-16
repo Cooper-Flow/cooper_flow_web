@@ -60,7 +60,7 @@ export class MainLayoutComponent implements OnInit {
   public getPermissions() {
     this.profileService.getPermission().subscribe(
       data => {
-        this.navigationService.permissions = data.permission;
+        this.navigationService.permissions = data.permissions;
         this.navigationService.fullAccess.set( data.access ?? false);
       }
     )
