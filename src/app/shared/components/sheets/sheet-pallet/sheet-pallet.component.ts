@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, signal } from '@angular/core';
 import { LocationService } from '@app/services/user/location.service';
-import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { Regex } from '@app/resources/handlers/regex';
 import { DateTime } from '@app/resources/handlers/datetime';
 import { Router } from '@angular/router';
@@ -9,6 +9,7 @@ import { VolumeService } from '@app/services/user/volume.service';
 import { SnackbarService } from '@app/services/common/snackbar.service';
 import { LoadingService } from '@app/services/common/loading.service';
 import { DialogConfirmComponent } from '../../dialog-confirm/dialog-confirm.component';
+import { SheetChangeSectorComponent } from '../sheet-change-location/sheet-change-sector';
 
 @Component({
   selector: 'app-sheet-pallet',
@@ -20,6 +21,8 @@ export class SheetPalletComponent implements OnInit {
   public isLoading = signal(true);
   public requestSuccess = signal(true);
   public palletData: any = {};
+  public groupMode = signal(false);
+  public selectedGroupVolumes: Array<string> = [];
 
   constructor(
     public locationService: LocationService,
@@ -32,6 +35,8 @@ export class SheetPalletComponent implements OnInit {
     public volumeService: VolumeService,
     public snackService: SnackbarService,
     public loadingService: LoadingService,
+    private _bottomSheet: MatBottomSheet,
+
   ) { }
 
   ngOnInit(): void {
@@ -87,6 +92,52 @@ export class SheetPalletComponent implements OnInit {
         }
       }
     )
+  }
+
+  public openChangeSector() {
+
+    const location_id = this.data.location_id
+
+    const sheets = this._bottomSheet.open(SheetChangeSectorComponent, {
+      data: {
+        location_id: location_id
+      }
+    });
+
+    sheets.afterDismissed().subscribe(
+      response => {
+        if (response) {
+          window.location.reload();
+        }
+      }
+    )
+  }
+
+  public initGroup(init: boolean, volume_id: string) {
+    this.selectedGroupVolumes = [];
+
+    if (init) {
+      this.selectedGroupVolumes.push(volume_id)
+    }
+
+    this.groupMode.set(init);
+  }
+
+  public includeGroupVolume(volume_id: string) {
+
+    if (!this.groupMode()) return;
+
+    if (this.selectedGroupVolumes.includes(volume_id)) {
+      this.selectedGroupVolumes = this.selectedGroupVolumes.filter(id => id !== volume_id);
+    } else {
+      this.selectedGroupVolumes.push(volume_id);
+    }
+  }
+
+  public salveGroup() {
+    if(this.selectedGroupVolumes.length <= 0) {
+      return this.snackService.open('Nenhum volume selecionado')
+    }
   }
 
 }

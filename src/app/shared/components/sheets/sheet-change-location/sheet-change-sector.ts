@@ -76,12 +76,10 @@ export class SheetChangeSectorComponent implements OnInit {
       new_sector_id: this.sector_id
     }
 
-    this._bottomSheetRef.dismiss();
-
     this.locationService.changeSector(data).subscribe(
       response => {
         this.snackService.open(response.message);
-        this.loadingService.setIsLoading(false);
+        this._bottomSheetRef.dismiss(true);
       },
       excp => {
         this.snackService.open('Houve um erro ao mudar localização');

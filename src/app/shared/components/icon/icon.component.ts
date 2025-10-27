@@ -12,8 +12,9 @@ export class IconComponent {
 
   get handleIcon() {
     switch(this.icon){
-      case "palette": return './assets/img/icons/palette.png';
+      case "palette": return './assets/img/icons/palette-green.png';
       case "box": return './assets/img/icons/box.png';
+      case "box_white": return './assets/img/icons/box_white.png';
       default: return ''
     }
   }

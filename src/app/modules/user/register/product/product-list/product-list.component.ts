@@ -19,7 +19,7 @@ interface props {
 export class ProductListComponent {
 
   public isLoading = signal(true);
-  displayedColumns: string[] = ['name', 'status', 'created_at', 'action',];
+  displayedColumns: string[] = ['color','name', 'status', 'created_at', 'action',];
   public productList: Array<props> = [];
   public productTotal: number = 0;
   public page_size: number = 10;
