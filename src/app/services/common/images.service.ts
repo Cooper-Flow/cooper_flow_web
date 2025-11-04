@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class ImagesService {
 
-  public logo = './assets/img/logo.png';
+  public logo = './assets/img/new_logo.png';
   public logoMin = './assets/img/logo_min.png';
   public background_login = './assets/img/background.jpg';
   public logoClient = './assets/img/logo_client.png';
