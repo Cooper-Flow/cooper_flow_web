@@ -52,6 +52,12 @@ export class TrackComponent {
         this.filter = value;
         this.getTrack(true);
       });
+
+    document.title = 'Rastreabilidade';
+  }
+
+  ngOnDestroy() {
+    document.title = 'CooperFlow';
   }
 
   get title() {

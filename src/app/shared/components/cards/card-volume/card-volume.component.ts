@@ -13,6 +13,8 @@ export class CardVolumeComponent {
   @Input() item: any
   @Input() disableHover?: boolean = false
   @Input() small?: boolean = false
+  @Input() line?: boolean = false
+  @Input() lineType?: string = ''
 
   constructor(
     public regex: Regex,

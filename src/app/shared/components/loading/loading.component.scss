@@ -1,33 +1,20 @@
 
 @import '../../../../styles.scss';
 
+
+
 .loader {
-  width: 40px;
+  width: 65px;
   aspect-ratio: 1;
   border-radius: 50%;
-  margin-top: -30px;
-  display: flex;
-  justify-content: center;
-  overflow: hidden;
-  transform-origin: 50% 116.5%;
-  animation: l17 1s infinite linear;
-}
-.loader:before {
-  content:"";
-  min-width: 233%;
-  height: 233%;
   background:
-    radial-gradient(farthest-side, $color-primary 90%,#0000) top,
-    radial-gradient(farthest-side,$color-secondary 90%,#0000) left,
-    radial-gradient(farthest-side,$color-third 90%,#0000) bottom,
-    radial-gradient(farthest-side,#F4F328 90%,#0000) right;
-  background-size: 43% 43%;
-  background-repeat: no-repeat;
-  animation: inherit;
-  animation-direction: reverse;
+    radial-gradient(farthest-side,$color-third 94%,#0000) top/8px 8px no-repeat,
+    conic-gradient(#0000 30%,$color-third);
+  -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 8px),#000 0);
+  animation: l13 1s infinite linear;
 }
-@keyframes l17 {
-  100% {transform: rotate(360deg)}
+@keyframes l13{
+  100%{transform: rotate(1turn)}
 }
 
 .pulse_text {

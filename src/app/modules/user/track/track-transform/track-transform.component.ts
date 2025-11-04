@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Calc } from '@app/resources/handlers/calc';
 import { DateTime } from '@app/resources/handlers/datetime';
 import { Regex } from '@app/resources/handlers/regex';
 import { DialogService } from '@app/services/common/dialog.service';
@@ -46,6 +47,7 @@ export class TrackTransformComponent implements OnInit {
     public dialogService: DialogService,
     public dialog: MatDialog,
     public _registerService: RegisterService,
+    public calc: Calc
   ) { }
 
   ngOnInit(): void {
@@ -364,6 +366,23 @@ export class TrackTransformComponent implements OnInit {
     }
   }
 
+  public getUnits(volume: any): number | string {
+    if (!volume?.weight || !volume?.material_id) {
+      return '-';
+    }
+
+    const material = this.materialList.find(m => m.id === volume.material_id);
+    if (!material || !material.volume) {
+      return '-';
+    }
+
+    const weight = Number(volume.weight);
+    const unitWeight = Number(material.volume);
+
+    if (!weight || !unitWeight) return '-';
+
+    return this.calc.calcTotalUnits({volume: unitWeight, weight: weight })
+  }
 
 
 }

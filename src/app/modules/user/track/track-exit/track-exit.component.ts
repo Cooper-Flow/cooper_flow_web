@@ -1,6 +1,7 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Calc } from '@app/resources/handlers/calc';
 import { DateTime } from '@app/resources/handlers/datetime';
 import { Regex } from '@app/resources/handlers/regex';
 import { LoadingService } from '@app/services/common/loading.service';
@@ -26,6 +27,9 @@ export class TrackExitComponent implements OnInit {
   public invoice = '';
   public locationList: Array<any> = [];
   public selectedVolumes: Array<string> = [];
+  public previewMode = signal(false);
+  showTopButton = false;
+
 
   constructor(
     public navigationService: NavigationService,
@@ -38,7 +42,8 @@ export class TrackExitComponent implements OnInit {
     public router: Router,
     public regex: Regex,
     private _volumeService: VolumeService,
-    private _locationService: LocationService
+    private _locationService: LocationService,
+    public calc: Calc
   ) { }
 
   ngOnInit(): void {
@@ -59,12 +64,71 @@ export class TrackExitComponent implements OnInit {
     return this.navigationService.getIcon('register');
   }
 
+  get totalSelectedWeight(): number {
+    let total = 0;
+
+    const looseVolumes = this.locationList.flatMap(loc => loc.Volume ?? []);
+
+    total += looseVolumes
+      .filter(v => this.selectedVolumes.includes(v.id))
+      .reduce((sum, v) => sum + (Number(v.weight) || 0), 0);
+
+    const groupVolumes = this.locationList
+      .flatMap(loc => loc.VolumeGroup ?? [])
+      .flatMap(group => group.Volume ?? []);
+
+    total += groupVolumes
+      .filter(v => this.selectedVolumes.includes(v.id))
+      .reduce((sum, v) => sum + (Number(v.weight) || 0), 0);
+
+    return total;
+  }
+
+
+  hasSelectedVolume(locationId: string | number): boolean {
+
+    if (!this.previewMode()) return true;
+
+    const location = this.locationList.find(l => l.id === locationId);
+    if (!location) return false;
+
+    const hasSingleVolume =
+      location.Volume?.some((v: { id: string }) =>
+        this.selectedVolumes.includes(v.id)
+      ) ?? false;
+
+    const hasGroupedVolume =
+      location.VolumeGroup?.some((g: any) =>
+        g.Volume?.some((v: { id: string }) =>
+          this.selectedVolumes.includes(v.id)
+        )
+      ) ?? false;
+
+    return hasSingleVolume || hasGroupedVolume;
+  }
+
+
+
+
+
+  checkView(volume_id: string) {
+    if (!this.previewMode()) {
+      return true
+    }
+
+    if (this.previewMode() && this.selectedVolumes.includes(volume_id)) {
+      return true
+    }
+
+    return false
+  }
+
   getSelectedVolumesText() {
-    if(this.selectedVolumes.length === 0) {
+    if (this.selectedVolumes.length === 0) {
       return 'Nenhum volume selecionado';
     }
 
-    if(this.selectedVolumes.length === 1) {
+    if (this.selectedVolumes.length === 1) {
       return '1 volume selecionado';
     }
 
@@ -101,7 +165,7 @@ export class TrackExitComponent implements OnInit {
 
     const volumes = this.selectedVolumes;
 
-    if(volumes.length === 0) return this.snackService.open('Selecione pelo menos um volume para finalizar e saída')
+    if (volumes.length === 0) return this.snackService.open('Selecione pelo menos um volume para finalizar e saída')
 
     const dialogRef = this.dialog.open(DialogConfirmComponent);
 
@@ -200,6 +264,22 @@ export class TrackExitComponent implements OnInit {
     } else {
       this.selectedVolumes.push(volume_id);
     }
+  }
+
+  public scrollToLocation(id: string) {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  scrollTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  @HostListener('window:scroll')
+  onScroll() {
+    this.showTopButton = window.scrollY > 200;
   }
 
 }

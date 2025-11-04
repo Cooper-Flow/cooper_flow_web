@@ -10,6 +10,7 @@ import { SnackbarService } from '@app/services/common/snackbar.service';
 import { LoadingService } from '@app/services/common/loading.service';
 import { DialogConfirmComponent } from '../../dialog-confirm/dialog-confirm.component';
 import { SheetChangeSectorComponent } from '../sheet-change-location/sheet-change-sector';
+import { Calc } from '@app/resources/handlers/calc';
 
 @Component({
   selector: 'app-sheet-pallet',
@@ -36,12 +37,29 @@ export class SheetPalletComponent implements OnInit {
     public snackService: SnackbarService,
     public loadingService: LoadingService,
     private _bottomSheet: MatBottomSheet,
-
+    public calc: Calc,
   ) { }
 
   ngOnInit(): void {
     this.getLocation();
   }
+
+  get getTotalWeightSelected() {
+    const selectedIds = new Set(this.selectedGroupVolumes);
+
+    const mainVolumes = this.palletData?.Volume ?? [];
+    const groupVolumes = this.palletData?.groups?.flatMap((g: any) => g.Volume) ?? [];
+
+    // junta tudo
+    const allVolumes = [...mainVolumes, ...groupVolumes];
+
+    return allVolumes
+      .filter(v => selectedIds.has(v.id)) // mantém só volumes selecionados
+      .reduce((sum, v) => sum + (Number(v.weight) || 0), 0); // soma peso
+  }
+
+
+
 
   public getLocation() {
 
@@ -135,9 +153,56 @@ export class SheetPalletComponent implements OnInit {
   }
 
   public salveGroup() {
-    if(this.selectedGroupVolumes.length <= 0) {
-      return this.snackService.open('Nenhum volume selecionado')
+
+    const location_id = this.data.location_id
+
+    if (this.selectedGroupVolumes.length <= 1) {
+      return this.snackService.open('Deve ser selecionado ao menos 2 volumes para agrupar')
     }
+
+    this.isLoading.set(true)
+
+    const data = {
+      volumes: this.selectedGroupVolumes,
+      location_id: location_id
+    }
+
+    this.initGroup(false, '')
+
+    this.volumeService.groupVolume(data).subscribe(
+      response => {
+        this.isLoading.set(false)
+        this.snackService.open('Volume agrupado com sucesso')
+        this.getLocation();
+      },
+      excp => {
+        this.snackService.open(excp.error?.message)
+        this.isLoading.set(false)
+      }
+    )
+  }
+
+
+  public removeGroup(volume_id: string) {
+
+    this.isLoading.set(true)
+
+    const data = {
+      volume_id: volume_id,
+    }
+
+    this.initGroup(false, '')
+
+    this.volumeService.removeGroupVolume(data).subscribe(
+      response => {
+        this.snackService.open('Volume desagrupado com sucesso')
+        this.getLocation();
+      },
+      excp => {
+        this.snackService.open(excp.error?.message)
+        this.isLoading.set(false)
+      }
+    )
   }
 
 }

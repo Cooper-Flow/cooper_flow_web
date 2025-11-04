@@ -1,6 +1,6 @@
 @if (loadingService.isLoading()) {
   <div class="fixed w-screen h-screen bg-gray-200/10 z-50 flex items-center justify-center">
-    <app-loading-transform></app-loading-transform>
+    <app-loading></app-loading>
   </div>
   }
 <section [class]="(loadingService.isLoading() ? 'blur-sm' : '')">

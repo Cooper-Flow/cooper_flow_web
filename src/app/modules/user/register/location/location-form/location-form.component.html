@@ -23,12 +23,18 @@
       <div class="mb-4 lg:flex">
         <div class="lg:w-[500px] w-full mr-2 mb-4">
           <label for="name" class="block mb-1 text-sm font-medium text-gray-900">
-            Nome do palete
+            Identificação do palete
           </label>
-          <input type="text" id="first_name" formControlName="name"
+          <input type="text" id="first_name" formControlName="name" placeholder="Ex: 8"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" />
+          <div class="text-end pr-2">
+            <span class="text-xs text-gray-500">{{ form.controls['name'].value?.length || 0 }} /2</span>
+          </div>
           @if (form.controls['name'].hasError('required') && showError()) {
-          <p class="mt-2 text-sm text-red-600 dark:text-red-500">Nome é obrigatório</p>
+          <p class="mt-2 text-sm text-red-600 dark:text-red-500">Identificação é obrigatório</p>
+          }
+          @if (form.controls['name'].hasError('invalidName') && showError()) {
+          <p class="mt-2 text-sm text-red-600 dark:text-red-500">A identificação do palete permite no máximo 2 caracteres</p>
           }
         </div>
 
@@ -44,11 +50,12 @@
 
       <div class="mb-4">
         <div class="lg:w-[200px] w-full mr-2">
-          <label for="countries" class="block mb-1 text-sm font-medium text-gray-900">Localização {{ isEditing() ? 'atual' : 'inicial' }}</label>
+          <label for="countries" class="block mb-1 text-sm font-medium text-gray-900">Localização {{ isEditing() ?
+            'atual' : 'inicial' }}</label>
           <select id="countries" formControlName="sector_id"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
             @for(sector of sectorList; track sector.id) {
-              <option [value]="sector.id">{{ sector.name }}</option>
+            <option [value]="sector.id">{{ sector.name }}</option>
             }
           </select>
           @if (form.controls['sector_id'].hasError('required') && showError()) {

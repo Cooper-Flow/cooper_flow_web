@@ -108,6 +108,15 @@ export class LocationFormComponent {
 
     const data = this.form.value;
 
+    if (data.name?.length > 2) {
+      this.showError.set(true)
+      this.form.controls['name'].setErrors({
+        'invalidName': { message: 'A identificação do palete permite no máximo 2 caracteres' }
+      })
+      return
+
+    }
+
     this.isLoading.set(true);
 
     let observable: Observable<any>;
