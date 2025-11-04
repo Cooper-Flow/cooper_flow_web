@@ -8,59 +8,191 @@
 }
 
 <ng-template #mainTemplate>
-  <div class="w-[100%] min-h-[90vh] pt-4 pl-4">
+  <div class="max-w-[90vw] min-h-[40em] pt-4 pl-4">
     <div>
-      <div class="flex items-center mb-4">
-        <div class="w-10 h-10 mr-2">
-          <app-icon icon="palette"></app-icon>
-        </div>
-        <div>
-          <div class="flex items-center">
-            <div class="mr-2">
-              <span class="font-medium">{{ palletData.name }}</span>
-            </div>
-            @if (palletData.Sector) {
-            <div class="bg-gray-500 rounded-full px-2 font-medium text-white">
-              <span class="text-xs">{{ palletData?.Sector?.name }}</span>
-            </div>
-            }
+      <div class="flex justify-between">
+        <div class="flex items-center mb-4">
+          <div class="w-10 h-10 bg-primary flex justify-center items-center mr-2 rounded-md">
+            <span class="font-medium text-white text-2xl">{{ palletData.name }}</span>
+          </div>
+          <div class="w-10 h-10 mr-2">
+            <app-icon icon="palette"></app-icon>
           </div>
           <div>
-            <span class="text-sm text-gray-600 text-normal">{{ palletData?.Volume?.length + ' ' +
-              (palletData?.Volume?.length > 1 ? 'volumes' : 'volume') }}</span>
+            <div class="flex items-center">
+              @if (palletData.Sector) {
+              <div class="bg-gray-500 rounded-full px-2 font-medium text-white">
+                <span class="text-xs">{{ palletData?.Sector?.name }}</span>
+              </div>
+              }
+            </div>
+            <div>
+              <span class="text-sm text-gray-600">{{ palletData?.totalVolumes + ' ' +
+                (palletData?.totalVolumes > 1 ? 'volumes' : 'volume') }} • </span>
+              <span class="font-medium text-sm"> {{ palletData?.totalVolumeWeight | kg }}</span>
+            </div>
           </div>
         </div>
+
+        @if (groupMode()) {
+        <div>
+          <div class="flex">
+            <button mat-raised-button (click)="salveGroup()" class="mr-2">
+              <div class="flex items-center">
+                <span>Agrupar</span>
+                <div class="rounded-full w-7 h-7 bg-blue-600 ml-1 flex items-center justify-center">
+                  <span class="text-white">{{ selectedGroupVolumes.length }}</span>
+                </div>
+              </div>
+            </button>
+            <button mat-button (click)="initGroup(false, '')">
+              <span>Cancelar</span>
+            </button>
+          </div>
+          <div class="text-sm py-2">
+            <span>Peso total no agrupamento: {{ getTotalWeightSelected | kg }}</span>
+          </div>
+        </div>
+        }
+        @else {
+        <button mat-button (click)="openChangeSector()">
+          <span>Mudar localização</span>
+        </button>
+        }
       </div>
 
-      <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-2">
-        @for (item of palletData.Volume; track $index) {
-        <div [matMenuTriggerFor]="menu" class="transform active:scale-95 transition duration-150">
-          <app-card-volume [item]="item" />
+
+      <div class="mb-4">
+        <div class="mb-2">
+          <span class="text-sm">Volumes individuais ({{ palletData.Volume.length ?? 0 }})</span>
         </div>
-        <mat-menu #menu="matMenu" xPosition="before">
-          <button mat-menu-item (click)="navigateRegister(item?.Entry?.Register?.id)"
-            class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
-            <mat-icon class="mr-2">app_registration</mat-icon>
-            Ver registro
-          </button>
-          <button mat-menu-item (click)="navigateTrack(item.id, 'movimentation')"
-            class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
-            <mat-icon class="mr-2">change_circle</mat-icon>
-            Movimentar volume
-          </button>
-          <!-- <button mat-menu-item (click)="navigateTrack(item.id, 'edit')"
+        @if (palletData.Volume.length === 0) {
+        <div class="py-4">
+          <app-zero-length text="Sem volumes individuais por aqui"></app-zero-length>
+        </div>
+        }
+        <div class="flex justify-center">
+          <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3">
+            @for (item of palletData.Volume; track $index) {
+            <div>
+              <div (click)="includeGroupVolume(item.id)" [matMenuTriggerFor]="!groupMode() ? menu : null"
+                class="transform active:scale-95 transition duration-150 hover:cursor-pointer w-[20rem]"
+                [ngClass]="{ 'border-4 border-blue-500 animate-pulse rounded-md duration-150': selectedGroupVolumes.includes(item.id) }">
+                <app-card-volume [item]="item" />
+              </div>
+            </div>
+            <mat-menu #menu="matMenu" xPosition="before">
+              <button mat-menu-item (click)="navigateRegister(item?.Entry?.Register?.id)"
+                class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+                <mat-icon class="mr-2">app_registration</mat-icon>
+                Ver registro
+              </button>
+              <button mat-menu-item (click)="navigateTrack(item.id, 'movimentation')"
+                class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+                <mat-icon class="mr-2">change_circle</mat-icon>
+                Movimentar volume
+              </button>
+              <button mat-menu-item (click)="initGroup(true, item.id)"
+                class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+                <mat-icon class="mr-2">group_work</mat-icon>
+                Agrupar volume
+              </button>
+              <!-- <button mat-menu-item (click)="navigateTrack(item.id, 'edit')"
             class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
             <mat-icon class="mr-2">edit</mat-icon>
             Editar volume
           </button> -->
-          <button mat-menu-item (click)="deleteVolume(item.id)"
-            class="flex items-center p-2 hover:bg-gray-200 hover:cursor-pointer">
-            <mat-icon class="mr-2">delete</mat-icon>
-            Excluir
-          </button>
-        </mat-menu>
-        }
+              <button mat-menu-item (click)="deleteVolume(item.id)"
+                class="flex items-center p-2 hover:bg-gray-200 hover:cursor-pointer">
+                <mat-icon class="mr-2">delete</mat-icon>
+                Excluir
+              </button>
+            </mat-menu>
+            }
+          </div>
+        </div>
       </div>
+
+      <div class="py-4">
+        <mat-divider></mat-divider>
+      </div>
+
+      <div>
+        <div class="mb-2">
+          <span class="text-sm">Volumes agrupados ({{ palletData.groups.length ?? 0 }})</span>
+        </div>
+        @if (palletData.groups.length === 0) {
+        <div class="py-4">
+          <app-zero-length text="Sem volumes agrupados por aqui"></app-zero-length>
+        </div>
+        }
+        <div class="flex justify-center">
+          <div class="grid grid-cols-1 gap-3">
+            @for (group of palletData.groups; track $index) {
+            <div class="border-[1px] border-gray-400 rounded-md shadow-md  border-l-4 border-l-primary">
+              @for (item of group.Volume; track $index) {
+              <div>
+                <div (click)="includeGroupVolume(item.id)" [matMenuTriggerFor]="!groupMode() ? menu : null"
+                  class="transform active:scale-95 transition duration-150 hover:cursor-pointer w-[20rem]"
+                  [ngClass]="{ 'border-4 border-blue-500 animate-pulse rounded-md duration-150': selectedGroupVolumes.includes(item.id) }">
+                  <app-card-volume [item]="item" />
+                </div>
+              </div>
+              <mat-divider></mat-divider>
+              <mat-menu #menu="matMenu" xPosition="before">
+                <button mat-menu-item (click)="navigateRegister(item?.Entry?.Register?.id)"
+                  class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+                  <mat-icon class="mr-2">app_registration</mat-icon>
+                  Ver registro
+                </button>
+                <button mat-menu-item (click)="navigateTrack(item.id, 'movimentation')"
+                  class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+                  <mat-icon class="mr-2">change_circle</mat-icon>
+                  Movimentar volume
+                </button>
+                <button mat-menu-item (click)="removeGroup(item.id)"
+                  class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+                  <mat-icon class="mr-2">disabled_by_default</mat-icon>
+                  Retirar do agrupamento
+                </button>
+                <button mat-menu-item (click)="deleteVolume(item.id)"
+                  class="flex items-center p-2 hover:bg-gray-200 hover:cursor-pointer">
+                  <mat-icon class="mr-2">delete</mat-icon>
+                  Excluir
+                </button>
+              </mat-menu>
+              }
+              <div class="py-2">
+                <div class="mb-1 px-2" matTooltip="Peso total">
+                  <div class="text-xs text-black font-medium rounded-tl-md flex items-center">
+                    <app-icon icon="weight" customClass="w-5 h-5 mr-2" />
+                    <div>
+                      <span class="">{{ group.totalWeight | kg }}</span>
+                    </div>
+                  </div>
+                </div>
+                @for (material of group.materials; track $index) {
+                <div class="text-xs text-black font-medium rounded-tl-md flex items-center mb-1 px-2"
+                  matTooltip="Material">
+                  <app-icon icon="material" customClass="w-5 h-5 mr-2" />
+                  <div>
+                    <span class="text-xs">{{ material?.name }} </span>
+                    <span>
+                      = {{ calc.calcTotalUnits({ volume: material.volume, weight: group.totalWeight })}}
+                    </span>
+                  </div>
+                </div>
+                }
+              </div>
+            </div>
+            <div class="py-4">
+              <mat-divider></mat-divider>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </ng-template>

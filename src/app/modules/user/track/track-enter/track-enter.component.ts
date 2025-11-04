@@ -68,6 +68,8 @@ export class TrackEnterComponent implements OnInit {
     this.getMaterial();
     this.getLocations();
     this.getReport();
+
+    document.title = 'Nova entrada';
   }
 
   get title() {

@@ -1,6 +1,6 @@
-<nav class="w-full">
+<nav class="w-full  mat-elevation-z2">
   <div
-    class="lg:h-[60px] h-[45px] bg-gray-100 w-full mat-elevation-z2 flex items-center justify-between sm:border-r-8 sm:border-l-0 border-l-8 border-primary">
+    class="lg:h-[60px] h-[45px] bg-gray-100 w-full flex items-center justify-between border-r-8 border-primary">
     <div class="py-2 lg:px-4 px-2 flex items-center">
       <div class="mr-1 lg:hidden flex">
         <button mat-icon-button (click)="openSideBar()">
@@ -9,17 +9,24 @@
       </div>
       <div [routerLink]="navigationService.getPATH('track')"
         class="hover:bg-gray-200 rounded-md p-1 hover:cursor-pointer">
-        <img [src]="imagesService.logo" alt="" class="h-[30px]">
+        <img [src]="imagesService.logo" alt="" class="h-[30px] sm:flex hidden">
+        <img [src]="imagesService.logoMin" alt="" class="h-[30px] sm:hidden flex">
       </div>
+      <!-- <div class="w-[1px] bg-gray-400 h-8 mx-2"></div>
+      <img [src]="imagesService.logoClient" alt="" class="h-[40px] px-1"> -->
+    </div>
+
+    <div class="pb-0.5 hidden sm:flex">
+      <span class="text-xs text-gray-600">COAC - Cooperativa Agroindustrial de Carlópolis</span>
     </div>
 
     <div class="flex justify-end items-center px-2">
-      <div class="mr-4">
+      <div class="mr-1">
         <button mat-icon-button routerLink="/in/track/">
           <mat-icon>account_tree</mat-icon>
         </button>
       </div>
-      <div class="mr-4">
+      <div class="mr-1">
         <button mat-icon-button [matMenuTriggerFor]="menu"
           class=" !text-orange-500 flex items-center justify-center">
           <mat-icon>add</mat-icon>
@@ -36,7 +43,7 @@
             Saída</button>
         </mat-menu>
       </div>
-      <div class="mr-4">
+      <div class="mr-1">
         <button mat-icon-button routerLink="/in/track/exit/list">
           <mat-icon [matBadge]="navigationService.hasExits()" [matBadgeHidden]="checkExits">local_shipping</mat-icon>
         </button>
@@ -63,5 +70,4 @@
       </mat-menu>
     </div>
   </div>
-
 </nav>

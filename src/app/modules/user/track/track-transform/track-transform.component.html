@@ -200,14 +200,19 @@
                     <span>Kg</span>
                   </div>
                 </div>
-                <div class="w-full">
-                  <label class="text-xs text-gray-400">Material</label>
-                  <select [(ngModel)]="volume.material_id" [ngModelOptions]="{standalone: true}"
-                    class=" text-gray-900 text-sm border border-gray-300 block p-2.5 w-full bg-gray-50 rounded-lg">
-                    @for (material of materialList; track $index) {
-                    <option [ngValue]="material.id">{{ material?.name }}</option>
-                    }
-                  </select>
+                <div class="flex items-center gap-2">
+                  <div class="w-full flex-1">
+                    <label class="text-xs text-gray-400">Material</label>
+                    <select [(ngModel)]="volume.material_id" [ngModelOptions]="{standalone: true}"
+                      class=" text-gray-900 text-sm border border-gray-300 block p-2.5 w-full bg-gray-50 rounded-lg">
+                      @for (material of materialList; track $index) {
+                      <option [ngValue]="material.id">{{ material?.name }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="flex-1  items-center pt-4">
+                    = {{ getUnits(volume) }}
+                  </div>
                 </div>
               </div>
 

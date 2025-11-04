@@ -34,6 +34,7 @@ export class ProductFormComponent {
   ) {
     this.form = this._formBuilder.group({
       name: ['', [Validators.required]],
+      color: ['#3A5C2C', [Validators.required]],
       isActive: [true, [Validators.required]],
     })
   }

@@ -44,14 +44,20 @@ export class TrackComponent {
 
   ngOnInit(): void {
     this.getSectors();
-    this.getTrack();
+    this.getTrack(true);
 
     this.subscription = this.filterSubject
       .pipe(debounceTime(500))
       .subscribe(value => {
         this.filter = value;
-        this.getTrack();
+        this.getTrack(true);
       });
+
+    document.title = 'Rastreabilidade';
+  }
+
+  ngOnDestroy() {
+    document.title = 'CooperFlow';
   }
 
   get title() {
@@ -79,8 +85,8 @@ export class TrackComponent {
     )
   }
 
-  public getTrack() {
-    this.isLoading.set(true);
+  public getTrack(withLoading: boolean) {
+    this.isLoading.set(withLoading);
 
     const params = {
       sector_id: this.sector_id,
@@ -112,21 +118,7 @@ export class TrackComponent {
 
     sheets.afterDismissed().subscribe(
       response => {
-        this.getTrack()
-      }
-    )
-  }
-
-  public openChangeSector(id: string) {
-    const sheets = this._bottomSheet.open(SheetChangeSectorComponent, {
-      data: {
-        location_id: id
-      }
-    });
-
-    sheets.afterDismissed().subscribe(
-      response => {
-        this.getTrack()
+        this.getTrack(false)
       }
     )
   }

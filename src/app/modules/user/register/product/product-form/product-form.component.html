@@ -42,6 +42,20 @@
         </div>
       </div>
 
+      <div>
+        <div class="mb-6">
+          <div class="flex items-center">
+            <label for="color" class="mb-1 text-sm font-medium text-gray-900 mr-2">
+              Cor de identificação
+            </label>
+            <input type="color" id="color" formControlName="color" class="hover: cursor-pointer" />
+          </div>
+          @if (form.controls['name'].hasError('required') && showError()) {
+          <p class="mt-2 text-sm text-red-600 dark:text-red-500">Nome do produto é obrigatório</p>
+          }
+        </div>
+      </div>
+
       <div class="mb-6">
         <div class="mb-1">
           <span class="text-sm font-medium mr-2 text-gray-900">Tipos do produto ({{ typesList.length }})</span>
@@ -74,7 +88,7 @@
             </div>
 
             <div class="pt-5">
-              <button mat-icon-button type="button"  (click)="deleteType($index)">
+              <button mat-icon-button type="button" (click)="deleteType($index)">
                 <mat-icon class="text-red-600">delete</mat-icon>
               </button>
             </div>

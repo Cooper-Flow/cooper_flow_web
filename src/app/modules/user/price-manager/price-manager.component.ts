@@ -20,10 +20,14 @@ export class PriceManagerComponent implements OnInit {
   public producer: any = null;
   public pricingList: Array<any> = [];
 
+  public entryList: Array<any> = [];
+
   public total: number = 0;
   public page_size: number = 10;
   public page_index: number = 0;
   public order: string = 'desc';
+
+  public template = signal(1);
 
   constructor(
     public navigationService: NavigationService,
@@ -83,6 +87,7 @@ export class PriceManagerComponent implements OnInit {
       data => {
         this.pricingList = data.data;
         this.total = data?.total;
+        this.entryList = data?.entries;
         this.isLoading.set(false);
       },
       excp => {
@@ -103,6 +108,10 @@ export class PriceManagerComponent implements OnInit {
     this.page_size = event.pageSize;
 
     this.getVolumes(this.producer);
+  }
+
+  public changeLayout(layout: number) {
+    this.template.set(layout)
   }
 
 }

@@ -1,4 +1,4 @@
-import {  CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { MaterialModule } from './lib/material.module';
 import { ExtraOptions, RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
@@ -25,6 +25,7 @@ import { IconComponent } from './components/icon/icon.component';
 import { SheetPalletComponent } from './components/sheets/sheet-pallet/sheet-pallet.component';
 import { CardVolumeComponent } from './components/cards/card-volume/card-volume.component';
 import { SheetChangeSectorComponent } from './components/sheets/sheet-change-location/sheet-change-sector';
+import { KgPipe } from '@app/pipes/kg.pipe';
 
 const config: ExtraOptions = {
   useHash: false,
@@ -55,7 +56,8 @@ const config: ExtraOptions = {
     IconComponent,
     SheetPalletComponent,
     CardVolumeComponent,
-    SheetChangeSectorComponent
+    SheetChangeSectorComponent,
+    KgPipe
   ],
   imports: [
     CommonModule,
@@ -89,7 +91,8 @@ const config: ExtraOptions = {
     SheetPalletComponent,
     DialogTransformComponent,
     CardVolumeComponent,
-    SheetChangeSectorComponent
+    SheetChangeSectorComponent,
+    KgPipe
   ],
 })
 export class SharedModule { }

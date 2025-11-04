@@ -1,13 +1,19 @@
-<section class="lg:p-4 p-2">
+<section class="lg:p-4 p-2 flex flex-col h-full">
   @if(isLoading()) {
   <app-loading></app-loading>
   } @else {
   <ng-container *ngTemplateOutlet="mainTemplate"></ng-container>
   }
+
 </section>
 
 <ng-template #mainTemplate>
-  <div class="mb-2 flex items-center justify-between">
+  <button *ngIf="showTopButton" (click)="scrollTop()"
+    class="fixed bottom-4 right-4 bg-primary text-white shadow-lg rounded-full w-12 h-12 flex items-center justify-center text-lg font-bold hover:scale-110 transition-transform z-50">
+    <mat-icon>arrow_upward</mat-icon>
+  </button>
+  <div class="mb-2 flex items-center justify-between sticky top-0 z-10 pb-2">
+
     <div class="mr-4 lg:mb-0 flex items-center">
       <app-title [text]="'Saída ' + exitData.id" icon="local_shipping"></app-title>
     </div>
@@ -19,6 +25,18 @@
         Voltar</button>
 
       <div class="flex justify-center">
+        @if (!previewMode()) {
+        <button mat-icon-button matTooltip="Ver volumes selecionados" type="button" (click)="this.previewMode.set(true)"
+          class="!bg-blue-600 mr-2">
+          <mat-icon class="!text-white">select_all</mat-icon>
+        </button>
+        }
+        @else {
+        <button mat-icon-button matTooltip="Ver todos os volumes" type="button" (click)="this.previewMode.set(false)"
+          class="!bg-gray-600 mr-2">
+          <mat-icon class="!text-white">deselect</mat-icon>
+        </button>
+        }
         <button mat-flat-button type="button" (click)="confirm()" class="!bg-green-600">
           Finalizar saída
         </button>
@@ -26,8 +44,13 @@
     </div>
   </div>
 
-  <div class="text-end text-sm">
-    <span>{{ getSelectedVolumesText() }}</span>
+  <div>
+    <div class="text-end text-sm">
+      <span>{{ getSelectedVolumesText() }}</span>
+    </div>
+    <p class="font-bold text-lg text-end">
+      Peso total: {{ totalSelectedWeight | kg }}
+    </p>
   </div>
 
   <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
@@ -115,25 +138,82 @@
   </div>
   }
 
-  <div class="">
-    @for (item of locationList; track $index) {
-    @if (item.Volume?.length > 0) {
-    <div class="p-4">
-      <div class="flex items-center">
-        <app-icon icon="palette" customClass="w-10 h-10 mr-4"></app-icon>
-        <span class="font-medium">{{ item.name }}</span>
+  <div>
+    <div class="flex gap-2 flex-wrap py-2">
+      @for (item of locationList; track $index) {
+      <div (click)="scrollToLocation(item.id)"
+        class="w-10 h-10 hover:bg-primary/80 bg-primary/70 flex justify-center items-center rounded-md hover:cursor-pointer">
+        <span class="font-medium text-white text-2xl">{{ item.name }}</span>
       </div>
-      <div class="flex flex-wrap py-2 gap-2">
-        @for (volume of item.Volume; track $index) {
-        <div class="hover:cursor-pointer hover:scale-105"
-          [ngClass]="{ 'bg-blue-500/50 rounded-md': selectedVolumes.includes(volume.id) }"
-          (click)="includeVolume(volume.id)">
-          <app-card-volume [item]="volume" [disableHover]="true" />
+      }
+    </div>
+
+    <div>
+      <mat-divider></mat-divider>
+    </div>
+
+    <div class="flex-1 overflow-auto">
+      @for (item of locationList; track $index) {
+
+      <div class="p-4" [id]="item.id">
+        @if (hasSelectedVolume(item.id)) {
+        <div class="flex items-center">
+          <app-icon icon="palette" customClass="w-10 h-10 mr-4"></app-icon>
+          <span class="font-medium">{{ item.name }}</span>
         </div>
         }
+        <div class="flex flex-wrap py-2 gap-2">
+          @for (volume of item.Volume; track $index) {
+          @if (checkView(volume.id)) {
+          <div class="hover:cursor-pointer"
+            [ngClass]="{ 'border-4 border-blue-500 animate-pulse rounded-md duration-150': selectedVolumes.includes(volume.id) }"
+            (click)="includeVolume(volume.id)">
+            <app-card-volume [item]="volume" [disableHover]="true" />
+          </div>
+          }
+          }
+          @for (group of item.VolumeGroup; track $index) {
+          <div class="border-[1px] border-gray-400 rounded-md shadow-md  border-l-4 border-l-primary p-1">
+            @for (tiny of group.Volume; track $index) {
+            @if (checkView(tiny.id)) {
+            <div>
+              <div (click)="includeVolume(tiny.id)" class="transform transition duration-150 hover:cursor-pointer w-[21rem]"
+                [ngClass]="{ 'border-4 border-blue-500 animate-pulse rounded-md duration-150 ': selectedVolumes.includes(tiny.id) }">
+                <app-card-volume [item]="tiny" />
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+            }
+            }
+            @if (!previewMode()) {
+            <div class="py-2">
+              <div class="mb-1 px-2" matTooltip="Peso total">
+                <div class="text-xs text-black font-medium rounded-tl-md flex items-center">
+                  <app-icon icon="weight" customClass="w-5 h-5 mr-2" />
+                  <div>
+                    <span class="">{{ group.groupWeight | kg }}</span>
+                  </div>
+                </div>
+              </div>
+              @for (material of group.materials; track $index) {
+              <div class="text-xs text-black font-medium rounded-tl-md flex items-center mb-1 px-2"
+                matTooltip="Material">
+                <app-icon icon="material" customClass="w-5 h-5 mr-2" />
+                <div>
+                  <span class="text-xs">{{ material?.name }} </span>
+                  <span>
+                    = {{ calc.calcTotalUnits({ volume: material.volume, weight: group.groupWeight })}}
+                  </span>
+                </div>
+              </div>
+              }
+            </div>
+            }
+          </div>
+          }
+        </div>
       </div>
+      }
     </div>
-    }
-    }
   </div>
 </ng-template>

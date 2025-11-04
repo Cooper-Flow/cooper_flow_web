@@ -28,4 +28,12 @@ export class VolumeService {
   public undoVolume(data: any): Observable<any> {
     return this.http.post(`volume/undo`, data);
   }
+
+  public groupVolume(data: any): Observable<any> {
+    return this.http.post(`volume/group`, data);
+  }
+
+   public removeGroupVolume(data: any): Observable<any> {
+    return this.http.post(`volume/remove-group`, data);
+  }
 }
