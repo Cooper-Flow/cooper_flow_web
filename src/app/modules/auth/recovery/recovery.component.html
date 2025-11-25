@@ -1,0 +1,48 @@
+<div class="max-w-[99vw] w-[400px]">
+  @switch (stage()) {
+  @case (1) {
+  <ng-container *ngTemplateOutlet="formTemplate"></ng-container>
+  }
+  @case (2) {
+  <ng-container *ngTemplateOutlet="successTemplate"></ng-container>
+  }
+  }
+</div>
+
+
+<ng-template #formTemplate>
+  <form class="w-full" [formGroup]="form" (ngSubmit)="sendRecovery()" class="p-4">
+    <div class="mb-4 text-center">
+      <span class="text-base font-medium">Recuperação de senha</span>
+    </div>
+    <mat-form-field class="w-full mb-3">
+      <mat-label>Email</mat-label>
+      <input id="user" type="email" matInput formControlName="email" floatLabel="always" placeholder="" required>
+      @if (this.form.controls['email'].invalid) {
+      <mat-error>Por favor, digite um e-mail válido</mat-error>
+      }
+    </mat-form-field>
+    <div class="flex justify-center px-4 mb-4">
+      <button mat-flat-button type="submit" class="w-full !bg-primary">
+        @if (isLoading()) {
+        <div>
+          <app-loader [diameter]="30"></app-loader>
+        </div>
+        } @else {
+        Enviar
+        }
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #successTemplate>
+  <div class="text-center">
+    <div class="mb-4">
+      <span>Um e-mail de recuperação de senha foi enviado para {{ email }}</span>
+    </div>
+    <button mat-flat-button routerLink="/auth" class=" !bg-primary">
+      Voltar ao início
+    </button>
+  </div>
+</ng-template>

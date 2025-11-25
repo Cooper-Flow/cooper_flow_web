@@ -9,7 +9,7 @@
         }
       </mat-form-field>
 
-      <mat-form-field class="w-full mb-2">
+      <mat-form-field class="w-full">
         <mat-label>Senha</mat-label>
         <input matInput formControlName="password" [type]="hide() ? 'password' : 'text'" required />
         <button mat-icon-button matSuffix type="button" (click)="clickEvent($event)" [attr.aria-label]="'Esconder senha'"
@@ -20,6 +20,10 @@
         <mat-error>Insira a senha</mat-error>
         }
       </mat-form-field>
+
+      <div class="mb-4 text-center">
+        <a routerLink="/auth/recovery" class="text-sm text-blue-500 hover:cursor-pointer hover:underline">Esqueci minha senha</a>
+      </div>
 
       <div class="flex justify-center px-4 mb-4">
         <button mat-flat-button type="submit" class="w-full !bg-primary">

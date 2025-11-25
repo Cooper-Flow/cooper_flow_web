@@ -5,6 +5,7 @@ import { AuthRoutingModule } from './auth-routing.module';
 import { SharedModule } from '@app/shared/shared.module';
 import { NewAccountComponent } from './new-account/new-account.component';
 import { RecoveryPasswordComponent } from './recovery-password/recovery-password.component';
+import { RecoveryComponent } from './recovery/recovery.component';
 
 
 
@@ -12,7 +13,8 @@ import { RecoveryPasswordComponent } from './recovery-password/recovery-password
   declarations: [
     LoginComponent,
     NewAccountComponent,
-    RecoveryPasswordComponent
+    RecoveryPasswordComponent,
+    RecoveryComponent
   ],
   imports: [
     CommonModule,

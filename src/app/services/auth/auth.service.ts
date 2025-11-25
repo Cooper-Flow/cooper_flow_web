@@ -27,6 +27,10 @@ export class AuthService {
     return this.http.get(`user/validate-password/${token}`);
   }
 
+  public resetPassword(data: any): Observable<any> {
+    return this.http.post(`user/reset-password`, data);
+  }
+
   public clearAuthData(): void {
 
     localStorage.removeItem('access_token');
