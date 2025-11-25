@@ -28,6 +28,7 @@ export class SidebarComponent {
     if (this.navigationService.fullAccess()) return true
     const childs = item.child;
     const permissions = this.navigationService.permissions;
+    console.log(permissions)
     return childs.some((c: any) => permissions.includes(c.permission));
   }
 

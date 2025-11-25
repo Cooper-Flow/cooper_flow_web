@@ -82,21 +82,21 @@
               </div>
             </div>
             <mat-menu #menu="matMenu" xPosition="before">
-              <button mat-menu-item (click)="navigateRegister(item?.Entry?.Register?.id)"
+              <!-- <button mat-menu-item (click)="navigateRegister(item?.Entry?.Register?.id)"
                 class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
                 <mat-icon class="mr-2">app_registration</mat-icon>
                 Ver registro
-              </button>
+              </button> -->
               <button mat-menu-item (click)="navigateTrack(item.id, 'movimentation')"
                 class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
                 <mat-icon class="mr-2">change_circle</mat-icon>
-                Movimentar volume
+                Transformar
               </button>
-              <button mat-menu-item (click)="initGroup(true, item.id)"
+              <!-- <button mat-menu-item (click)="initGroup(true, item.id)"
                 class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
                 <mat-icon class="mr-2">group_work</mat-icon>
                 Agrupar volume
-              </button>
+              </button> -->
               <!-- <button mat-menu-item (click)="navigateTrack(item.id, 'edit')"
             class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
             <mat-icon class="mr-2">edit</mat-icon>
@@ -117,7 +117,7 @@
         <mat-divider></mat-divider>
       </div>
 
-      <div>
+      <!-- <div>
         <div class="mb-2">
           <span class="text-sm">Volumes agrupados ({{ palletData.groups.length ?? 0 }})</span>
         </div>
@@ -191,7 +191,7 @@
             }
           </div>
         </div>
-      </div>
+      </div> -->
 
     </div>
   </div>

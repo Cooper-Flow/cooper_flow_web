@@ -102,13 +102,13 @@ export class NavigationService {
           icon: 'account_tree',
           path: '/in/track'
         },
-        {
-          permission: PermissionEnum.T01,
-          page: 'register',
-          name: 'Registros',
-          icon: 'app_registration',
-          path: '/in/register'
-        },
+        // {
+        //   permission: PermissionEnum.T01,
+        //   page: 'register',
+        //   name: 'Registros',
+        //   icon: 'app_registration',
+        //   path: '/in/register'
+        // },
         {
           permission: PermissionEnum.T07,
           page: 'report_manager',

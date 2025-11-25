@@ -173,11 +173,11 @@
       <mat-icon>history_2</mat-icon>
       Histórico
     </button>
-    <!-- <button mat-button (click)="changeLayout(2)" class="mr-2"
+    <button mat-button (click)="changeLayout(2)" class="mr-2"
       [ngClass]="{'!bg-blue-600 !text-white' : template() === 2 }">
       <mat-icon>calculate</mat-icon>
       Calcular
-    </button> -->
+    </button>
   </div>
 
   @switch (template()) {
@@ -193,7 +193,7 @@
   }
   }
   <div>
-    <mat-paginator (page)="pageEvent($event)" [length]="total" [pageSize]="page_size"
+    <mat-paginator (page)="pageEvent($event)" [length]="template() === 1 ? totalEntries : total" [pageSize]="page_size"
       [pageSizeOptions]="[5, 10, 25, 100]" [pageIndex]="page_index"></mat-paginator>
   </div>
 </ng-template>
@@ -202,11 +202,11 @@
   <div>
     <div>
       @for (item of entryList; track $index) {
-      <div class="border border-gray-500 rounded-md p-4 mb-4">
+      <div class="border border-gray-300 rounded-md p-4 mb-4">
         <div>
           <span class="text-green-600 text-sm font-medium">Entrada {{ item.id }}</span>
         </div>
-        <div class="flex gap-2 mb-1">
+        <div class="flex gap-2 mb-2">
           <span class="text-gray-500 text-xs">Lote: {{ item.batch ?? '---' }}</span>
           <span class="text-gray-500 text-xs">•</span>
           <span class="text-gray-500 text-xs">Talhão: {{ item.field ?? '---' }}</span>
@@ -214,17 +214,48 @@
           <span class="text-gray-500 text-xs"> {{ dateTime.convertToBRTime(item.created_at)}}</span>
         </div>
 
-        <div class="mb-4">
-          @for (enter of item.VolumeEnter; track $index) {
-            <app-card-volume [item]="enter" [line]="true" lineType="entry"></app-card-volume>
-          }
-        </div>
-        <div class="pl-4">
-          @for (volume of item.Volume; track $index) {
-            <div class="mb-2">
-              <app-card-volume [item]="volume" [line]="true" lineType="done"></app-card-volume>
+        <div class="grid md:grid-cols-3 gap-2">
+          <div class="mb-4">
+            <div class="mb-1">
+              <span class="text-sm font-medium">Entrada</span>
             </div>
-          }
+            @for (enter of item.VolumeEnter; track $index) {
+            <div class="mb-2 shadow-md">
+              <app-card-volume [item]="enter" [line]="true" lineType="entry"></app-card-volume>
+            </div>
+            }
+          </div>
+          <div class="col-span-2 pt-1">
+            <div class="grid grid-cols-2 mb-1 ">
+              <span class="text-sm font-medium">Transformação</span>
+              <span class="text-sm font-medium">Destinação</span>
+            </div>
+            @for (volume of item.Volume; track $index) {
+            <div class="mb-2 shadow-md grid grid-cols-2">
+              <app-card-volume [item]="volume" [line]="true" lineType="done"></app-card-volume>
+              <div class=" bg-blue-50 flex items-center">
+                <div class="bg-gray-400 h-full w-[1px]"></div>
+                @if (volume.Exit) {
+                <div class="py-1 px-2">
+                  <div class="flex items-center gap-1">
+                    <span class="text-xs">Incluso na </span>
+                    <div class="bg-red-300 rounded-full px-2 hover:bg-red-400 hover:cursor-pointer">
+                      <span class="text-xs font-medium">Saída {{ volume.Exit.id ?? '' }}</span>
+                    </div>
+                  </div>
+                </div>
+                }
+                @else {
+                <div class="flex justify-center items-center w-full">
+                  <div>
+                    <span class="text-xs text-gray-600">Em tranformação</span>
+                  </div>
+                </div>
+                }
+              </div>
+            </div>
+            }
+          </div>
         </div>
       </div>
       }

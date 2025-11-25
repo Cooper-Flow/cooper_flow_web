@@ -62,6 +62,11 @@ export class NewAccountComponent implements OnInit {
     event.stopPropagation();
   }
 
+  clickEvent2(event: MouseEvent) {
+    this.hide2.set(!this.hide());
+    event.stopPropagation();
+  }
+
   public createPassword() {
 
     if(this.form.invalid) {

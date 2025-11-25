@@ -23,6 +23,7 @@ export class PriceManagerComponent implements OnInit {
   public entryList: Array<any> = [];
 
   public total: number = 0;
+  public totalEntries: number = 0;
   public page_size: number = 10;
   public page_index: number = 0;
   public order: string = 'desc';
@@ -38,7 +39,19 @@ export class PriceManagerComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getVolumes(this.producer)
+    const data = localStorage.getItem('price_selected_user');
+    const tab = localStorage.getItem('price_selected_tab');
+
+    if(data) {
+      this.selectedProducer.set(true)
+      this.getVolumes(JSON.parse(data))
+    } else {
+      this.getVolumes(this.producer)
+    }
+
+    if(tab) {
+      this.template.set(Number(tab))
+    }
   }
 
   get title() {
@@ -65,6 +78,7 @@ export class PriceManagerComponent implements OnInit {
         if (response) {
           this.selectedProducer.set(true)
           this.getVolumes(response)
+          localStorage.setItem('price_selected_user', JSON.stringify(response));
         }
       }
     )
@@ -87,6 +101,7 @@ export class PriceManagerComponent implements OnInit {
       data => {
         this.pricingList = data.data;
         this.total = data?.total;
+        this.totalEntries = data?.totalEntries;
         this.entryList = data?.entries;
         this.isLoading.set(false);
       },
@@ -98,6 +113,7 @@ export class PriceManagerComponent implements OnInit {
   }
 
   public removeProducerFilter() {
+    localStorage.removeItem('price_selected_user')
     this.selectedProducer.set(false);
     this.getVolumes(null);
   }
@@ -111,6 +127,7 @@ export class PriceManagerComponent implements OnInit {
   }
 
   public changeLayout(layout: number) {
+    localStorage.setItem('price_selected_tab', String(layout));
     this.template.set(layout)
   }
 

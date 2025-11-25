@@ -46,8 +46,8 @@ const routes: Routes = [
   { path: 'track/exit/list', component: TrackExitListComponent },
   { path: 'track/location/detail/:id', component: TrackLocationComponent },
 
-  { path: 'register', component: ReportComponent },
-  { path: 'register/:id', component: ReportDetailComponent },
+  // { path: 'register', component: ReportComponent },
+  // { path: 'register/:id', component: ReportDetailComponent },
   { path: 'stock', component: StockComponent },
 
   {

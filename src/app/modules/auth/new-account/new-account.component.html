@@ -29,8 +29,8 @@
     <mat-form-field class="w-full">
       <mat-label>Confirmar senha</mat-label>
       <input matInput formControlName="confirm" [type]="hide2() ? 'password' : 'text'" required />
-      <button mat-icon-button matSuffix (click)="clickEvent($event)" [attr.aria-label]="'Esconder senha'"
-        [attr.aria-pressed]="hide()">
+      <button mat-icon-button matSuffix (click)="clickEvent2($event)" [attr.aria-label]="'Esconder senha'"
+        [attr.aria-pressed]="hide2()">
         <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
       </button>
       @if (this.form.controls['password'].invalid) {
