@@ -11,8 +11,9 @@
       <mat-button-toggle value="producer">Produtor</mat-button-toggle>
     </mat-button-toggle-group> -->
 
-    <div class="flex items-center">
-      <div class="lg:w-[150px] w-full mr-2">
+    <div class="sm:flex items-center">
+      <div class="sm:w-[200px] w-full mr-2">
+        <label class="text-sm font-normal">Entrada/Saída</label>
         <select [(ngModel)]="filter" [ngModelOptions]="{standalone: true}" (ngModelChange)="setFilter()"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
           <option value="entry">Entradas</option>
@@ -21,7 +22,17 @@
       </div>
 
       <div class="">
-        <div class="w-[300px] mr-4">
+        <label class="text-sm font-normal">Identificação</label>
+        <div class="sm:w-[200px] w-full mr-4">
+          <input type="text" id="field" placeholder="Filtrar por identificação" [(ngModel)]="id"
+            [ngModelOptions]="{standalone: true}" (ngModelChange)="setFilter()"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" />
+        </div>
+      </div>
+
+      <div class="">
+        <label class="text-sm font-normal">Lote</label>
+        <div class="sm:w-[200px] w-full mr-4">
           <input type="text" id="field" placeholder="Filtrar por lote" [(ngModel)]="batch"
             [ngModelOptions]="{standalone: true}" (ngModelChange)="setFilter()"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" />

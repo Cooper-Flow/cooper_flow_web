@@ -24,6 +24,7 @@ export class ReportManagerComponent {
   public producer: any = null;
   public filter = "entry";
   public batch = "";
+  public id = "";
   public reportList: Array<any> = [];
   public exitList: Array<any> = [];
   public pricingVolumesList: Array<string> = [];
@@ -92,6 +93,7 @@ export class ReportManagerComponent {
       producer_id: producer_id,
       batch: this.batch,
       filter: this.filter,
+      id: this.id,
       page: this.page_index + 1,
       pageSize: this.page_size,
       order: this.order
