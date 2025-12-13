@@ -1,0 +1,229 @@
+<section class="lg:p-4 p-2">
+  <div class="mr-4 lg:mb-4 mb-4 flex items-center pt-2 justify-between">
+    <app-title [text]="title" [icon]="icon"></app-title>
+    <div>
+      <button mat-button routerLink="/in/track" class="!text-primary flex items-center mr-2"
+        matTooltip="Voltar para rastreabilidade">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar</button>
+    </div>
+  </div>
+  <div class="w-full mb-4">
+    <div class="py-2 mb-2">
+      <div class="min-w-[150px] w-full mr-4">
+        <label class="block text-sm font-medium text-gray-900 mb-1">
+          Entrada
+        </label>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-select [(ngModel)]="selectedEntry" (selectionChange)="filterOrder($event.value)"
+            [ngModelOptions]="{ standalone: true }" placeholder="Selecione uma entrada">
+
+            @for (item of entryList; track $index) {
+            <mat-option [value]="item.id">
+              <div class="flex flex-col">
+                <strong>#{{ item.id }}</strong>
+                <span class="text-xs text-gray-600">
+                  {{ item?.Producer?.Person?.name }} —
+                  {{ dateTime.convertToBRTime(item.created_at) }}
+                </span>
+              </div>
+            </mat-option>
+            }
+
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+  </div>
+  @if (isLoading()) {
+  <app-loading></app-loading>
+  }
+  @else {
+  <ng-container *ngTemplateOutlet="mainTemplate"></ng-container>
+  }
+</section>
+
+<ng-template #mainTemplate>
+  <div>
+    <div>
+      <div class="mb-8">
+        <mat-accordion>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title> Volumes de entrada ({{ volumeEntryList.length }}) </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="flex flex-wrap">
+              @for (volume of volumeEntryList; track $index) {
+              <div class="mb-2">
+                <div class="text-sm px-1">
+                  @if (volume.Location) {
+                  <a (click)="openLocationDialog(volume.Location.id)"
+                    class="hover:text-blue-600 hover:cursor-pointer">Palete {{ volume.Location.name }}</a>
+                  }
+                  @else {
+                  <span>Sem localização</span>
+                  }
+                </div>
+                <div class="hover:scale-[101%] hover:cursor-pointer">
+                  <app-card-volume [item]="volume" lineType="entry" [disableHover]="true"></app-card-volume>
+                </div>
+              </div>
+              }
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+
+      <div class="mb-4 h-[1px] bg-slate-300"></div>
+
+      <div class="gap-2 sm:grid grid-cols-2">
+
+        <div class="min-w-[350px] w-full mb-4">
+          <div class="mb-6 flex items-end justify-between">
+            <div>
+              <div>
+                <span class="font-medium text-sm">Em processamento ({{ volumeProcessList.length }})</span>
+              </div>
+              <div>
+                <span class="text-xs text-gray-700">Peso total em processamento: {{
+                  regex.formatToTwoDigits(totalProcessWeigth()) | kg}}</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="bg-gray-100 rounded-md p-4  overflow-auto min-h-[290px]">
+              <div class="text-end">
+                <button mat-icon-button (click)="openVolumeDialog(null)">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+              <div class="w-full gap-2 flex flex-wrap">
+                @for (volume of volumeProcessList; track $index) {
+                <div class="mb-4">
+                  <div class="text-sm px-1">
+                    @if (volume.Location) {
+                    <a (click)="openLocationDialog(volume.Location.id)"
+                      class="hover:text-blue-600 hover:cursor-pointer">Palete {{ volume.Location.name }}</a>
+                    }
+                    @else {
+                    <span>Sem localização</span>
+                    }
+                  </div>
+                  <div>
+                    <div class="hover:scale-[101%] hover:cursor-pointer" [matMenuTriggerFor]="menu">
+                      <app-card-volume [item]="volume" lineType="entry" [disableHover]="true"></app-card-volume>
+                    </div>
+                    <mat-menu #menu="matMenu" yPosition="below">
+                      <button mat-menu-item (click)="openVolumeDialog(volume.id)"
+                        class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+                        <mat-icon class="mr-2">edit</mat-icon>
+                        Editar volume
+                      </button>
+                      @if (selectedExit !== 0) {
+                      <button mat-menu-item (click)="sendToExit(volume.id)"
+                        class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+                        <mat-icon class="mr-2">local_shipping</mat-icon>
+                        Alocar para saída {{ selectedExit }}
+                      </button>
+                      }
+                      <button mat-menu-item (click)="deleteVolume(volume.id)"
+                        class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+                        <mat-icon class="mr-2">delete</mat-icon>
+                        Excluir
+                      </button>
+                    </mat-menu>
+                  </div>
+                </div>
+                }
+              </div>
+              <div class="flex justify-center py-4">
+                <button mat-stroked-button (click)="openVolumeDialog(null)">
+                  <mat-icon>add</mat-icon>
+                  Adicionar volume
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="w-full">
+          <div class="flex items-end w-full">
+            <div class="w-full">
+              <div class="min-w-[150px] w-full">
+                <label class="flex items-center text-sm font-medium text-gray-900 mb-1">
+                  <mat-icon class="mr-2">local_shipping</mat-icon>
+                  Saídas em andamento
+                </label>
+
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-select [(ngModel)]="selectedExit" (selectionChange)="detailExit($event.value)"
+                    [ngModelOptions]="{ standalone: true }" placeholder="Selecione uma saída">
+
+                    @for (item of exitList; track $index) {
+                    <mat-option [value]="item.id">
+                      <div class="flex flex-col py-1">
+                        <strong>#{{ item.id }}</strong>
+                        <span class="text-xs text-gray-600">
+                          {{ types.exitType(item.exit_type) }} —
+                          {{ types.exitClientName(item.exit_type, item) }} —
+                          {{ dateTime.convertToBRTime(item.created_at) }}
+                        </span>
+                      </div>
+                    </mat-option>
+                    }
+
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <div class="text-end">
+                <span class="text-sm">Volumes desta saída: {{ exitVolumes.length }}</span>
+              </div>
+
+
+              <div class="bg-gray-100 rounded-md p-4  overflow-auto min-h-[290px]">
+                <div class="mb-4 flex justify-end">
+                  <button mat-stroked-button (click)="closeExit()">
+                    Finalizar
+                  </button>
+                </div>
+                <div class="w-full gap-2 flex flex-wrap">
+                  @for (volume of exitVolumes; track $index) {
+                  <div class="mb-4">
+                    <div>
+                      <div class="hover:scale-[101%] hover:cursor-pointer" [matMenuTriggerFor]="menu">
+                        <app-card-volume [item]="volume" lineType="entry" [disableHover]="true"></app-card-volume>
+                      </div>
+                      <mat-menu #menu="matMenu" yPosition="below">
+                        <button mat-menu-item (click)="openVolumeDialog(volume.id)"
+                          class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+                          <mat-icon class="mr-2">edit</mat-icon>
+                          Editar volume
+                        </button>
+                        <button mat-menu-item (click)="undo(volume.id)"
+                          class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+                          <mat-icon class="mr-2">undo</mat-icon>
+                          Voltar para o palete
+                        </button>
+                        <button mat-menu-item (click)="deleteVolume(volume.id)"
+                          class="flex items-center p-2 mb-2 hover:bg-gray-200 hover:cursor-pointer">
+                          <mat-icon class="mr-2">delete</mat-icon>
+                          Excluir
+                        </button>
+                      </mat-menu>
+                    </div>
+                  </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</ng-template>

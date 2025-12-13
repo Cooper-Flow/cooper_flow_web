@@ -236,12 +236,18 @@
               <div class=" bg-blue-50 flex items-center">
                 <div class="bg-gray-400 h-full w-[1px]"></div>
                 @if (volume.Exit) {
-                <div class="py-1 px-2">
-                  <div class="flex items-center gap-1">
+                <div class="px-2">
+                  <div class="text-xs">
+                    <span>{{ typesService.exitType(volume.Exit.exit_type) }}</span>
+                  </div>
+                  <div class="flex items-center gap-1 mb-2">
                     <span class="text-xs">Incluso na </span>
                     <div class="bg-red-300 rounded-full px-2 hover:bg-red-400 hover:cursor-pointer">
                       <span class="text-xs font-medium">Saída {{ volume.Exit.id ?? '' }}</span>
                     </div>
+                  </div>
+                  <div class="text-xs text-gray-500">
+                    <span>{{ dateTime.convertToBRTime(volume.Exit.created_at) }}</span>
                   </div>
                 </div>
                 }

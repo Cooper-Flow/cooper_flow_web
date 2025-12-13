@@ -26,6 +26,7 @@ import { SheetPalletComponent } from './components/sheets/sheet-pallet/sheet-pal
 import { CardVolumeComponent } from './components/cards/card-volume/card-volume.component';
 import { SheetChangeSectorComponent } from './components/sheets/sheet-change-location/sheet-change-sector';
 import { KgPipe } from '@app/pipes/kg.pipe';
+import { VolumeDialogComponent } from './components/dialogs/volume-dialog/volume-dialog.component';
 
 const config: ExtraOptions = {
   useHash: false,
@@ -57,7 +58,8 @@ const config: ExtraOptions = {
     SheetPalletComponent,
     CardVolumeComponent,
     SheetChangeSectorComponent,
-    KgPipe
+    KgPipe,
+    VolumeDialogComponent
   ],
   imports: [
     CommonModule,
@@ -92,7 +94,8 @@ const config: ExtraOptions = {
     DialogTransformComponent,
     CardVolumeComponent,
     SheetChangeSectorComponent,
-    KgPipe
+    KgPipe,
+    VolumeDialogComponent
   ],
 })
 export class SharedModule { }

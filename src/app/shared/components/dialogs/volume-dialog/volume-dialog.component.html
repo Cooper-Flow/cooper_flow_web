@@ -1,0 +1,174 @@
+<div class="sm:min-w-[375px] w-[450px]  max-w-screen min-h-[320px] max-h-screen">
+  @if (isLoadingProduct()) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+  @if (loadingPoint() < 4) { <app-loading></app-loading>
+    }
+    @else {
+    <ng-container *ngTemplateOutlet="mainTemplate"></ng-container>
+    }
+</div>
+
+
+<ng-template #mainTemplate>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="p-2" [class.blur-[1px]]="isSaving()"
+    [class.pointer-events-none]="isSaving()">
+    <div class="lg:col-span-1">
+      <div class="p-3 mb-4 bg-white">
+        <div class="mb-4 ">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <app-icon icon="box" customClass="w-6 h-6 mr-2" />
+              <div>
+                <span class="font-medium text-lg">{{ isEditing() ? 'Editar' : 'Novo' }} volume</span>
+              </div>
+            </div>
+            <div>
+              <button mat-icon-button matDialogClose="true">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+          <div>
+            <span class="text-sm text-gray-600">Para entrada {{ selectedEntry }}</span>
+          </div>
+        </div>
+
+        <div>
+          <div>
+            <label class="text-xs text-gray-400">Produto</label>
+            <select formControlName="product_id" (change)="setProduct($event)"
+              class=" text-gray-900 text-sm rounded-lg border border-gray-300 block p-2.5  min-w-full  bg-gray-50">
+              @for (product of productList; track $index) {
+              <option [value]="product.id">{{ product?.name }}</option>
+              }
+            </select>
+            @if (form.get('product_id')?.invalid
+            && (form.get('product_id')?.touched || form.get('product_id')?.dirty)) {
+            <p class="text-xs text-red-500 mt-1">
+              O produto é obrigatório
+            </p>
+            }
+          </div>
+        </div>
+        @if (showProductTypes()) {
+        <div class="grid grid-cols-2 mb-2">
+          <div>
+            <label class="text-xs text-gray-400">Tipo</label>
+            <select formControlName="product_type"
+              class=" text-gray-900 text-sm rounded-l-lg border border-gray-300 block p-2.5 min-w-full  bg-gray-50">
+              @for (type of typeList; track $index) {
+              <option [value]="type?.name">{{ type?.name }}</option>
+              }
+            </select>
+            @if (form.get('product_type')?.invalid
+            && (form.get('product_type')?.touched || form.get('product_type')?.dirty)) {
+            <p class="text-xs text-red-500 mt-1">
+              O tipo do produto é obrigatório
+            </p>
+            }
+
+          </div>
+          <div class="w-full">
+            <label class="text-xs text-gray-400">Tamanho</label>
+            <select formControlName="product_size"
+              class=" text-gray-900 text-sm border border-gray-300 block p-2.5 min-w-full bg-gray-50 rounded-e-lg">
+              @for (size of sizeList; track $index) {
+              <option [value]="size?.name">{{ size?.name }}</option>
+              }
+            </select>
+            @if (form.get('product_size')?.invalid
+            && (form.get('product_size')?.touched || form.get('product_size')?.dirty)) {
+            <p class="text-xs text-red-500 mt-1">
+              O tamanho do produto é obrigatório
+            </p>
+            }
+          </div>
+        </div>
+        }
+        <!--
+            <div class="py-1">
+              <mat-slide-toggle [(ngModel)]="volume.single" [ngModelOptions]="{standalone: true}"
+                (ngModelChange)="setSingle($index, $event)">Volume avulso</mat-slide-toggle>
+            </div> -->
+
+        <div class="mb-1">
+          <div class="mb-1">
+            <label class="text-xs text-gray-500">Peso</label>
+            <div class="flex items-center">
+              <input type="number" formControlName="weight"
+                class="mr-2 rounded-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 lg:min-w-[200px] max-w-[200px] text-sm border-gray-300 p-2.5">
+              <span>Kg</span>
+            </div>
+            @if (form.get('weight')?.invalid
+            && (form.get('weight')?.touched || form.get('weight')?.dirty)) {
+            <p class="text-xs text-red-500 mt-1">
+              O peso é obrigatório
+            </p>
+            }
+            @if (form.get('weight')?.errors?.['min']) {
+            <p class="text-xs text-red-500 mt-1">
+              O peso deve ser maior que zero
+            </p>
+            }
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-full flex-1">
+              <label class="text-xs text-gray-400">Material</label>
+              <select formControlName="material_id"
+                class=" text-gray-900 text-sm border border-gray-300 block p-2.5 w-full bg-gray-50 rounded-lg">
+                @for (material of materialList; track $index) {
+                <option [ngValue]="material.id">{{ material?.name }}</option>
+                }
+              </select>
+              @if (form.get('material_id')?.invalid
+              && (form.get('material_id')?.touched || form.get('material_id')?.dirty)) {
+              <p class="text-xs text-red-500 mt-1">
+                O material é obrigatório
+              </p>
+              }
+            </div>
+            <div class="flex-1  items-center pt-4">
+              = {{ getUnits() }}
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="w-full mb-[5px]">
+            <label class="text-xs text-gray-500">Novo palete</label>
+            <select formControlName="location_id"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+              @for (location of locationList; track $index) {
+              <option selected [ngValue]="location.id">Palete {{ location.name }}</option>
+              }
+            </select>
+            @if (form.get('location_id')?.invalid
+            && (form.get('location_id')?.touched || form.get('location_id')?.dirty)) {
+            <p class="text-xs text-red-500 mt-1">
+              O palete é obrigatório
+            </p>
+            }
+          </div>
+        </div>
+
+        <div class="">
+          <button mat-flat-button type="submit">
+            @if(isSaving()) {
+            <div>
+              <app-loader [diameter]="30"></app-loader>
+            </div>
+            }
+            @else {
+            {{ isEditing() ? 'Editar volume' : 'Criar volume' }}
+            }
+
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </form>
+</ng-template>

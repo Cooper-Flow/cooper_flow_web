@@ -35,6 +35,7 @@ import { ReportManagerComponent } from './report-manager/report-manager.componen
 import { PriceManagerDetailComponent } from './price-manager/price-manager-detail/price-manager-detail.component';
 import { PermissionGuard } from '@app/guards/permission.guard';
 import { PermissionEnum } from '@app/enum/permissions.enum';
+import { TrackTranformationComponent } from './track/track-tranformation/track-tranformation.component';
 
 const routes: Routes = [
   // Rastreabilidade
@@ -45,6 +46,8 @@ const routes: Routes = [
   { path: 'track/exit/init', component: TrackExitFormComponent },
   { path: 'track/exit/list', component: TrackExitListComponent },
   { path: 'track/location/detail/:id', component: TrackLocationComponent },
+  { path: 'track/transformation', component: TrackTranformationComponent },
+  { path: 'track/transformation/:id', component: TrackTranformationComponent },
 
   // { path: 'register', component: ReportComponent },
   // { path: 'register/:id', component: ReportDetailComponent },

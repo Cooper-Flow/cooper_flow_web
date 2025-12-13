@@ -37,6 +37,10 @@ export class NavigationService {
     private _profileService: ProfileService
   ) { }
 
+  public path = {
+    transformation: '/in/track/transformation'
+  }
+
   public getExits() {
     this._registerService.listExits().subscribe(
       data => {

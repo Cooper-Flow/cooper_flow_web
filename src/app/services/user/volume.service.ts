@@ -33,7 +33,19 @@ export class VolumeService {
     return this.http.post(`volume/group`, data);
   }
 
-   public removeGroupVolume(data: any): Observable<any> {
+  public removeGroupVolume(data: any): Observable<any> {
     return this.http.post(`volume/remove-group`, data);
+  }
+
+  public create(data: any): Observable<any> {
+    return this.http.post(`volume/create`, data);
+  }
+
+  public update(data: any): Observable<any> {
+    return this.http.post(`volume/update`, data);
+  }
+
+  public moveExit(data: any): Observable<any> {
+    return this.http.post(`volume/move-exit`, data);
   }
 }

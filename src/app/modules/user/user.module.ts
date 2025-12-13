@@ -37,8 +37,8 @@ import { PriceManagerComponent } from './price-manager/price-manager.component';
 import { ReportManagerComponent } from './report-manager/report-manager.component';
 import { PriceManagerDetailComponent } from './price-manager/price-manager-detail/price-manager-detail.component';
 import { A11yModule } from "@angular/cdk/a11y";
-import { KgPipe } from '@app/pipes/kg.pipe';
 import { ReportViewComponent } from './report-view/report-view.component';
+import { TrackTranformationComponent } from './track/track-tranformation/track-tranformation.component';
 
 
 @NgModule({
@@ -76,7 +76,8 @@ import { ReportViewComponent } from './report-view/report-view.component';
     PriceManagerComponent,
     ReportManagerComponent,
     PriceManagerDetailComponent,
-    ReportViewComponent
+    ReportViewComponent,
+    TrackTranformationComponent
   ],
   imports: [
     CommonModule,

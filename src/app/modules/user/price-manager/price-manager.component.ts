@@ -4,6 +4,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { DateTime } from '@app/resources/handlers/datetime';
 import { NavigationService } from '@app/services/common/navigation.service';
 import { SnackbarService } from '@app/services/common/snackbar.service';
+import { TypesService } from '@app/services/common/types.service';
 import { PricingService } from '@app/services/user/pricing.service';
 import { SelectorProducerComponent } from '@app/shared/components/selector-producer/selector-producer.component';
 
@@ -36,6 +37,7 @@ export class PriceManagerComponent implements OnInit {
     private _pricingService: PricingService,
     public snackService: SnackbarService,
     public dateTime: DateTime,
+    public typesService: TypesService
   ) { }
 
   ngOnInit(): void {
