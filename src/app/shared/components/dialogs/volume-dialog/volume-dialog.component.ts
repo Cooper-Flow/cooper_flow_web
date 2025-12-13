@@ -88,21 +88,16 @@ export class VolumeDialogComponent implements OnInit {
     this.volume_id.set(id);
     this._volumeService.detail(id).subscribe(
       data => {
-        if (data?.exited || data?.Location === null) {
-          this.router.navigate(['/in/track']);
-          this.snackService.open('Este volume não existe mais')
-        } else {
-          this.form.patchValue({
-            product_id: data.product_id,
-            product_type: data.type,
-            product_size: data.size,
-            weight: data.weight,
-            material_id: data.material_id,
-            location_id: data.location_id
-          });
-          this.getProductDetail(data.product_id)
-          this.loadingPoint.update(value => value + 1);
-        }
+        this.form.patchValue({
+          product_id: data.product_id,
+          product_type: data.type,
+          product_size: data.size,
+          weight: data.weight,
+          material_id: data.material_id,
+          location_id: data.location_id
+        });
+        this.getProductDetail(data.product_id)
+        this.loadingPoint.update(value => value + 1);
       },
       excp => {
         this.snackService.open(excp.error.message)
@@ -172,9 +167,9 @@ export class VolumeDialogComponent implements OnInit {
   public setProduct(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.form.patchValue({
-    product_type: null,
-    product_size: null,
-  });
+      product_type: null,
+      product_size: null,
+    });
     this.getProductDetail(value)
   }
 
@@ -207,7 +202,7 @@ export class VolumeDialogComponent implements OnInit {
 
     let observable: Observable<any>;
 
-    if(this.isEditing()) {
+    if (this.isEditing()) {
       formData.id = this.volume_id();
       observable = this._volumeService.update(formData);
     }
