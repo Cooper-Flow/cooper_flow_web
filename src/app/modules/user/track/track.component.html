@@ -40,7 +40,7 @@
       <div class="md:w-[50%] w-full mr-2 mb-2">
         <label class="block mb-1 text-sm font-medium text-gray-900">Localização</label>
         <select [(ngModel)]="sector_id" [ngModelOptions]="{standalone: true}" (ngModelChange)="getTrack(true)"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+          class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
           <option value="">Todas</option>
           @for (sector of sectorList; track $index) {
           <option [ngValue]="sector.id">{{ sector.name }}</option>
@@ -52,7 +52,7 @@
         <label class="block mb-1 text-sm font-medium text-gray-900">Palete</label>
         <input type="text" [(ngModel)]="filter" [ngModelOptions]="{standalone: true}"
           (ngModelChange)="onFilterChange($event)"
-          class="rounded-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 w-full text-sm border-gray-300 p-2.5 ">
+          class="rounded-lg bg-white border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 w-full text-sm border-gray-300 p-2.5 ">
       </div>
     </div>
 
@@ -73,7 +73,7 @@
     <div class="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5">
       @for (location of locationList; track $index) {
       <div matButton (click)="openLocationDialog(location.id)"
-        class="h-[70px] flex justify-between items-center w-full border-[1px] border-gray-500 rounded-md px-2 py-2 active:bg-gray-300 active:scale-105 shadow-lg hover:cursor-pointer hover:scale-105">
+        class="h-[70px] flex justify-between items-center w-full border-[1px] border-gray-500 bg-white rounded-md px-2 py-2 active:bg-gray-300 active:scale-105 shadow-lg hover:cursor-pointer hover:scale-105">
         <div class="flex items-center">
           <div class="flex items-center border-r-[1px] border-gray-400">
             <div class="w-10 h-10 bg-primary flex justify-center items-center mr-2 rounded-md">

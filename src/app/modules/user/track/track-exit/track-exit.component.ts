@@ -25,6 +25,7 @@ export class TrackExitComponent implements OnInit {
   public exitData: any = {};
   public date = '';
   public invoice = '';
+  public observation = '';
   public locationList: Array<any> = [];
   public selectedVolumes: Array<string> = [];
   public previewMode = signal(false);
@@ -177,6 +178,7 @@ export class TrackExitComponent implements OnInit {
             exit_id: this.exitData.id,
             date: new Date(this.date).toISOString(),
             invoice: this.invoice,
+            observation: this.observation,
             volumes: volumes
           }
 
