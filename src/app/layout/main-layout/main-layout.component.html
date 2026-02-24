@@ -7,17 +7,19 @@
   <div class="mb-[2px] fixed top-0 w-full z-40">
     <app-navigation (openEvent)="openSidebar.set(!openSidebar())"></app-navigation>
   </div>
-  <main class="min-h-screen w-full flex fade50  lg:pt-[60px] pt-[48px]">
+  <main class="min-h-screen w-full flex fade50  lg:pt-[60px] pt-[40px]">
     @if(openSidebar()) {
-    <div class="border-r-2 border-secondary/30 fixed h-full fade_in lg:shadow-none shadow-lg rounded-tr-lg z-40 mt-1">
+    <div class="fixed h-full fade_in lg:shadow-none shadow-lg z-40 mt-1">
       <app-sidebar></app-sidebar>
     </div>
     }
     @if(openSidebar() && displayMode() === 'mobile'){
     <div (click)="openSidebar.set(false)" class="w-screen h-screen absolute bg-black/20 backdrop-blur-sm z-30"></div>
     }
-    <div class="w-full min-h-full p-1 bg-gray-50/50 lg:pl-[200px]">
-      <router-outlet></router-outlet>
+    <div class="w-full min-h-full p-1 lg:pl-[200px]">
+      <div class="w-full min-h-full rounded-tl-[20px] bg-gray-50/50 ">
+        <router-outlet></router-outlet>
+      </div>
     </div>
   </main>
 
