@@ -4,6 +4,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { DateTime } from '@app/resources/handlers/datetime';
 import { NavigationService } from '@app/services/common/navigation.service';
 import { SnackbarService } from '@app/services/common/snackbar.service';
+import { TypesService } from '@app/services/common/types.service';
 import { PricingService } from '@app/services/user/pricing.service';
 import { SelectorProducerComponent } from '@app/shared/components/selector-producer/selector-producer.component';
 
@@ -23,6 +24,7 @@ export class PriceManagerComponent implements OnInit {
   public entryList: Array<any> = [];
 
   public total: number = 0;
+  public totalEntries: number = 0;
   public page_size: number = 10;
   public page_index: number = 0;
   public order: string = 'desc';
@@ -35,10 +37,23 @@ export class PriceManagerComponent implements OnInit {
     private _pricingService: PricingService,
     public snackService: SnackbarService,
     public dateTime: DateTime,
+    public typesService: TypesService
   ) { }
 
   ngOnInit(): void {
-    this.getVolumes(this.producer)
+    const data = localStorage.getItem('price_selected_user');
+    const tab = localStorage.getItem('price_selected_tab');
+
+    if(data) {
+      this.selectedProducer.set(true)
+      this.getVolumes(JSON.parse(data))
+    } else {
+      this.getVolumes(this.producer)
+    }
+
+    if(tab) {
+      this.template.set(Number(tab))
+    }
   }
 
   get title() {
@@ -65,6 +80,7 @@ export class PriceManagerComponent implements OnInit {
         if (response) {
           this.selectedProducer.set(true)
           this.getVolumes(response)
+          localStorage.setItem('price_selected_user', JSON.stringify(response));
         }
       }
     )
@@ -87,6 +103,7 @@ export class PriceManagerComponent implements OnInit {
       data => {
         this.pricingList = data.data;
         this.total = data?.total;
+        this.totalEntries = data?.totalEntries;
         this.entryList = data?.entries;
         this.isLoading.set(false);
       },
@@ -98,6 +115,7 @@ export class PriceManagerComponent implements OnInit {
   }
 
   public removeProducerFilter() {
+    localStorage.removeItem('price_selected_user')
     this.selectedProducer.set(false);
     this.getVolumes(null);
   }
@@ -111,6 +129,7 @@ export class PriceManagerComponent implements OnInit {
   }
 
   public changeLayout(layout: number) {
+    localStorage.setItem('price_selected_tab', String(layout));
     this.template.set(layout)
   }
 

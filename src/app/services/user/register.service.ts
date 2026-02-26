@@ -33,7 +33,11 @@ export class RegisterService {
     return this.http.get(`register/exit/detail/${id}`);
   }
 
-  public listExits(): Observable<any> {
-    return this.http.get(`register/exit`);
+  public listExits(params?: any): Observable<any> {
+    return this.http.get(`register/exit`, { params });
+  }
+
+  public transformation(params: any): Observable<any> {
+    return this.http.get(`register/transformation`, { params });
   }
 }

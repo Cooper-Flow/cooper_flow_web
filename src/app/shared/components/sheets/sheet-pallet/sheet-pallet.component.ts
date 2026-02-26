@@ -11,6 +11,7 @@ import { LoadingService } from '@app/services/common/loading.service';
 import { DialogConfirmComponent } from '../../dialog-confirm/dialog-confirm.component';
 import { SheetChangeSectorComponent } from '../sheet-change-location/sheet-change-sector';
 import { Calc } from '@app/resources/handlers/calc';
+import { NavigationService } from '@app/services/common/navigation.service';
 
 @Component({
   selector: 'app-sheet-pallet',
@@ -38,6 +39,7 @@ export class SheetPalletComponent implements OnInit {
     public loadingService: LoadingService,
     private _bottomSheet: MatBottomSheet,
     public calc: Calc,
+    public navigationService: NavigationService
   ) { }
 
   ngOnInit(): void {
@@ -79,9 +81,10 @@ export class SheetPalletComponent implements OnInit {
     this.router.navigate(['/in/register/' + id])
   }
 
-  public navigateTrack(id: string, template: string) {
-    this._bottomSheetRef.dismiss()
-    this.router.navigate(['/in/track/transform/' + id], { queryParams: { template: template } })
+  public navigateTrack(volume: any) {
+    this._bottomSheetRef.dismiss();
+
+    this.router.navigate(['/in/track/transformation/' + volume.Entry.id])
   }
 
   public deleteVolume(id: string) {

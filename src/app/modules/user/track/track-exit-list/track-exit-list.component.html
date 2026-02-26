@@ -29,7 +29,7 @@
         </div>
 
         <div>
-          <button mat-icon-button [routerLink]="'/in/track/exit/detail/' + item.id" matTooltip="Detalhar registro">
+          <button mat-icon-button (click)="goToTransform(item.id)" matTooltip="Detalhar registro">
             <mat-icon class="text-gray-500">open_in_new</mat-icon>
           </button>
         </div>

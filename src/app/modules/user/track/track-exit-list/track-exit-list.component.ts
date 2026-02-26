@@ -1,4 +1,5 @@
 import { Component, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { DateTime } from '@app/resources/handlers/datetime';
 import { NavigationService } from '@app/services/common/navigation.service';
 import { RegisterService } from '@app/services/user/register.service';
@@ -16,7 +17,8 @@ export class TrackExitListComponent {
   constructor(
     public navigationService: NavigationService,
     public _registerService: RegisterService,
-    public dateTime: DateTime
+    public dateTime: DateTime,
+    public router: Router
   ) { }
 
   ngOnInit(): void {
@@ -38,5 +40,11 @@ export class TrackExitListComponent {
         this.isLoading.set(false)
       }
     )
+  }
+
+  public goToTransform(exit_id: number) {
+    localStorage.setItem('selectedExit', String(exit_id));
+    this.router.navigate(['/in/track/transformation/'])
+
   }
 }

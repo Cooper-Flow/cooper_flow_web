@@ -7,7 +7,7 @@ export class ImagesService {
 
   public logo = './assets/img/new_logo.png';
   public logoMin = './assets/img/logo_min.png';
-  public background_login = './assets/img/background.jpg';
+  public background_login = './assets/img/background.png';
   public logoClient = './assets/img/logo_client.png';
 
   //Icons

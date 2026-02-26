@@ -1,5 +1,5 @@
 import { ApplicationConfig, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
-import { ExtraOptions, provideRouter } from '@angular/router';
+import { ExtraOptions, provideRouter, withRouterConfig } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -26,7 +26,13 @@ export const appConfig: ApplicationConfig = {
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { floatLabel: 'always' } },
     { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntl },
     provideNgxMask(),
-    AuthGuard
+    AuthGuard,
+    provideRouter(
+      routes,
+      withRouterConfig({
+        onSameUrlNavigation: 'reload'
+      })
+    )
   ],
 
 };
