@@ -11,8 +11,8 @@
       <mat-button-toggle value="producer">Produtor</mat-button-toggle>
     </mat-button-toggle-group> -->
 
-    <div class="sm:flex items-center">
-      <div class="sm:w-[200px] w-full mr-2">
+    <div class="grid md:grid-cols-5 sm:grid-cols-2 gap-2">
+      <div class="col-span-1 w-full mr-2">
         <label class="text-sm font-normal">Entrada/Saída</label>
         <select [(ngModel)]="filter" [ngModelOptions]="{standalone: true}" (ngModelChange)="setFilter()"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
@@ -23,7 +23,7 @@
 
       <div class="">
         <label class="text-sm font-normal">Identificação</label>
-        <div class="sm:w-[200px] w-full mr-4">
+        <div class="col-span-1 w-full mr-4">
           <input type="text" id="field" placeholder="Filtrar por identificação" [(ngModel)]="id"
             [ngModelOptions]="{standalone: true}" (ngModelChange)="setFilter()"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" />
@@ -32,10 +32,23 @@
 
       <div class="">
         <label class="text-sm font-normal">Lote</label>
-        <div class="sm:w-[200px] w-full mr-4">
+        <div class="col-span-1 w-full mr-4">
           <input type="text" id="field" placeholder="Filtrar por lote" [(ngModel)]="batch"
             [ngModelOptions]="{standalone: true}" (ngModelChange)="setFilter()"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" />
+        </div>
+      </div>
+
+      <div class="sm:w-[250px] w-full mr-4">
+        <label class="text-sm font-normal">Período</label>
+
+        <div class="flex items-center justify-between rounded-lg border border-gray-400 !text-sm">
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+          <mat-date-range-input [rangePicker]="picker">
+            <input matStartDate placeholder="Data inicial" [(ngModel)]="startDate" (dateChange)="setFilter()">
+            <input matEndDate placeholder="Data final" [(ngModel)]="endDate" (dateChange)="setFilter()">
+          </mat-date-range-input>
         </div>
       </div>
     </div>
@@ -417,6 +430,18 @@
                 <span class="text-gray-600 text-xs">Observação: {{ exit.observation ?? '---'}}</span>
               </div>
             </div>
+          </div>
+
+          <div class="rounded-lg border border-gray-400 px-4 py-2 text-sm">
+            <div>
+              <span class="font-">Carga total</span>
+            </div>
+            @for (summary of exit.materials_summary; track $index) {
+            <div>
+              <span>{{ summary.material_name }} → </span>
+              <span>Peso total: {{ summary.total_weight | kg}} = {{ summary.amount }} unid.</span>
+            </div>
+            }
           </div>
 
           <div class="flex flex-wrap py-2 gap-2">

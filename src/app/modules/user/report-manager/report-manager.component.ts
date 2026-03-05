@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
+import { Calc } from '@app/resources/handlers/calc';
 import { DateTime } from '@app/resources/handlers/datetime';
 import { Regex } from '@app/resources/handlers/regex';
 import { LoadingService } from '@app/services/common/loading.service';
@@ -34,6 +35,9 @@ export class ReportManagerComponent {
   public page_index: number = 0;
   public order: string = 'desc';
 
+  startDate: string | null = null;
+  endDate: string | null = null;
+
   constructor(
     public navigationService: NavigationService,
     public dialog: MatDialog,
@@ -42,7 +46,8 @@ export class ReportManagerComponent {
     public regex: Regex,
     public dateTime: DateTime,
     public loadingService: LoadingService,
-    public router: Router
+    public router: Router,
+    public calc: Calc,
   ) { }
 
   ngOnInit(): void {
@@ -96,7 +101,9 @@ export class ReportManagerComponent {
       id: this.id,
       page: this.page_index + 1,
       pageSize: this.page_size,
-      order: this.order
+      order: this.order,
+      start_date: this.startDate,
+      end_date: this.endDate
     }
 
     this._pricingService.getVoluesByProducer(params).subscribe(
@@ -184,4 +191,5 @@ export class ReportManagerComponent {
 
     this.getData(this.producer)
   }
+
 }
