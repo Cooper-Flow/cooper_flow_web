@@ -166,6 +166,9 @@
                 <span class="text-gray-500 text-xs">•</span>
                 <span class="text-gray-500 text-xs"> {{ dateTime.convertToBRTime(entry.created_at)}}</span>
               </div>
+              <div>
+                <span class="text-gray-500 text-xs">Observação: {{ entry.observation ?? '---' }}</span>
+              </div>
             </div>
 
             <label class="inline-flex items-center cursor-pointer">
