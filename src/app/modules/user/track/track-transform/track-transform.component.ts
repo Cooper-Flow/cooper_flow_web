@@ -32,6 +32,7 @@ export class TrackTransformComponent implements OnInit {
   public typeList: Array<any> = [];
   public removeWeight: number = 0;
   public loadingPoint = signal(0);
+  public observation: string = '';
 
   constructor(
     public navigationService: NavigationService,
@@ -298,7 +299,8 @@ export class TrackTransformComponent implements OnInit {
       drawn: this.totalAmount,
       drawn_weight: this.removeWeight,
       remaining: this.remaining,
-      movimentation_type: this.template()
+      movimentation_type: this.template(),
+      observation: this.observation
     }
 
     const dialogRef = this.dialog.open(DialogTransformComponent, { data: data });
